@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <!-- Тег meta для указания кодировки -->
+  <meta charset="utf-8">
+</head>
+
+<style>
+  
+  .canvas{
+    position:absolute;
+    background:white;
+    top:50px;
+    padding-left: none;
+    margin-left: none;
+  }
+
+  .tabl{
+    position:absolute;
+    left:0px;
+    top:0px;
+    width:200px;
+    z-index: 10;
+  }
+
+  .table{
+    background: white;
+  }
+  
+  .add{
+    position:relative;
+    left:300px;
+    top:250px;
+    width:200px;
+    height: 100px;
+    z-index: 10;
+  }
+
+  .close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 10px;
+    font-weight: 300;
+    text-decoration: none;
+    color: #333;
+  }
+
+  .value{
+    margin-left: 5px;
+  }
+
+  .infoRed{
+    position: absolute;
+    background: #eee;
+    left: 300px;
+    top: 150px;
+  }
+
+  .close-popup{
+    margin-left: 5px;
+    font-size: 15px;
+    color: rgb(153, 17, 24);
+    font-family: Arial;
+    font-weight: normal;
+    cursor: pointer;
+  }
+
+
+
+
+
+.carousel {
+  position: absolute;
+  width: 398px;
+  padding: 10px 40px;
+  border: 1px solid #CCC;
+  border-radius: 15px;
+  background: #eee;
+  left: 300px;
+  top: 150px;
+}
+
+.carousel img {
+  width: 130px;
+  height: 130px;
+  /* по умолчанию inline, в ряде браузеров это даст лишнее пространство вокруг элементов */
+
+  display: block;
+}
+
+.arrow {
+  position: absolute;
+  top: 60px;
+  padding: 0;
+  background: #ddd;
+  border-radius: 15px;
+  border: 1px solid gray;
+  font-size: 24px;
+  line-height: 24px;
+  color: #444;
+  display: block;
+}
+
+.arrow:focus {
+  outline: none;
+}
+
+.arrow:hover {
+  background: #ccc;
+  cursor: pointer;
+}
+
+.prev {
+  left: 7px;
+}
+
+.next {
+  right: 7px;
+}
+
+.gallery {
+  width: 390px;
+  overflow: hidden;
+}
+
+.gallery ul {
+  height: 130px;
+  width: 9999px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transition: margin-left 250ms;
+  /* remove white-space between inline-block'ed li */
+  /* http://davidwalsh.name/remove-whitespace-inline-block */
+
+  font-size: 0;
+}
+
+.gallery li {
+  display: inline-block;
+}
+ 
+</style>
+
+<script src="d3.min.js"></script>
+<script src="jquery-3.4.1.min.js"></script>
+
+
+<body>
+    
+    <div>
+        <input type="search" name="Поиск" placeholder="Поиск" id="search">   
+        <input type="submit" value="Search" class="search" onclick="SearchID(document.getElementById('search').value)">
+        <button onclick="AddObject()">Add</button>
+        <input type="radio" name="LinkType" value="Ethernet">Ethernet</input>
+        <input type="radio" name="LinkType" value="InfinityBand">InfinityBand</input>
+        <input type="radio" name="LinkType" value="None" checked>None</input>
+        <button onclick="AddLink()">Connect</button>
+        <button onclick="Save()">Save</button>
+        <button id="Undo" onclick="Undo()" disabled>Undo</button>
+        <input type="checkbox" name="LinkFilter" value="Ethernet" onchange="FilterChanged('Ethernet')">Ethernet</input>
+        <input type="checkbox" name="LinkFilter" value="InfinityBand" onchange="FilterChanged('InfinityBand')">InfinityBand</input>
+    </div>
+
+    <script src="networkscript.js"></script>
+
+
+</body>
+
+</html>

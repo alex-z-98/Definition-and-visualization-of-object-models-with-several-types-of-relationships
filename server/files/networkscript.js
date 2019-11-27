@@ -10,7 +10,11 @@ var w=1272,
   linkFlag=false,
   LinkFilter=[];
   images=["block.png", "door.png", "comut.png", "energy.png", "server.png", "blade2.jpg", "disk.jpg", "comut1.png", "rect.png"],
-  types=["Ethernet", "InfinityBand",];
+  types=["Ethernet", "InfinityBand",],
+  StartingPoint = {},
+  MousePoint = {},
+  SelectedBuffer = [],
+  SelectedLvl=undefined;
 
 var preMODEL={}, preMODELlvl, preMODELnode;
 
@@ -409,6 +413,64 @@ function Draw(L, Lindex, i=-1)
           .attr("width", w)
           .attr("height", h);
 
+
+
+    svg.call(d3.drag().on("drag", function(){
+      svg.select(".selection")
+        .remove();
+      if (StartingPoint.x == undefined)
+      {
+        StartingPoint.x = d3.mouse(this)[0];
+        StartingPoint.y = d3.mouse(this)[1];
+      }
+      svg.append("polygon")
+        .attr("class", "selection")
+        .attr("points", function(){return d3.mouse(this)[0]+","+d3.mouse(this)[1]+" "+d3.mouse(this)[0]+","+StartingPoint.y+" "+StartingPoint.x+","+StartingPoint.y+" "+StartingPoint.x+","+d3.mouse(this)[1]})
+        .attr("fill", "rgb(0,0,200)")
+        .attr("stroke", "blue")
+        .attr("fill-opacity", 0.15);
+
+      MousePoint.x = d3.mouse(this)[0];
+      MousePoint.y = d3.mouse(this)[1];
+    })
+    .on("end", function(){
+      SelectedBuffer = [];
+      SelectedLvl = current;
+      //var i=0;
+      L.elems.forEach(element => {
+        if(element.x<Math.max(MousePoint.x, StartingPoint.x)&&element.x>Math.min(MousePoint.x, StartingPoint.x)&&element.y<Math.max(MousePoint.y, StartingPoint.y)&&element.y>Math.min(MousePoint.y, StartingPoint.y))
+        {
+          SelectedBuffer.push(element);
+        }
+      });
+      svg.select(".selection")
+        .remove();
+      StartingPoint = {};
+    }));
+
+    d3.select("body").on("keydown", function(){
+      if (SelectedBuffer.length)
+      {
+        SelectedLvl.lines.forEach(element => {
+          if (SelectedBuffer.includes(SelectedLvl.elems[element.target])&&SelectedBuffer.includes(SelectedLvl.elems[element.source]))
+            current.lines.push({source: current.elems.length+SelectedBuffer.indexOf(SelectedLvl.elems[element.source]), target: current.elems.length+SelectedBuffer.indexOf(SelectedLvl.elems[element.target])})
+        });
+        SelectedBuffer.forEach(element => {
+          var tmp={};
+          var TmpLvl={};
+          Object.assign(tmp, element);
+          if (element.child != undefined) TmpLvl=JSON.parse(JSON.stringify(MODEL[Lindex+1][element.child]));
+          tmp.copy=true;
+          if (element.child!=undefined) tmp.child=MODEL[Lindex+1].length;
+          current.elems.push(tmp);
+          MODEL[Lindex+1].push(TmpLvl);
+          if (element.child!=undefined) CopyLevels(MODEL[Lindex+1][tmp.child], Lindex+1, MODEL[Lindex].indexOf(L));
+        });
+        Draw(L, Lindex);
+      }
+    })
+
+
     if (i!=-1 && L.elems[i].hide!=true)
     {
         svg.append("rect")
@@ -510,7 +572,7 @@ function Draw(L, Lindex, i=-1)
             var tmp={};
             var TmpLvl={};
             Object.assign(tmp, d);
-            TmpLvl=JSON.parse(JSON.stringify(MODEL[Lindex+1][d.child]));
+            if (d.child != undefined) TmpLvl=JSON.parse(JSON.stringify(MODEL[Lindex+1][d.child]));
             tmp.copy=true;
             if (d.child!=undefined) tmp.child=MODEL[Lindex+1].length;
             current.elems.push(tmp);

@@ -10,7 +10,13 @@ var w=1272,
   linkFlag=false,
   LinkFilter=[];
   images=["block.png", "door.png", "comut.png", "energy.png", "server.png", "blade2.jpg", "disk.jpg", "comut1.png", "rect.png"],
-  types=["Ethernet", "InfinityBand",];
+  types=["Ethernet", "InfinityBand",],
+  StartingPoint = {},
+  MousePoint = {},
+  SelectedBuffer = [],
+  SelectedLvl=undefined,
+  SelectedLayer = undefined;
+
 
 var preMODEL={}, preMODELlvl, preMODELnode;
 
@@ -376,16 +382,17 @@ function Undo()
   Draw(MODEL[preMODELlvl][preMODELnode], preMODELlvl);
 }
 
-function CopyLevels(L, LvlIndex, father)
+function CopyLevels(L, LvlIndex, father, IterSelectedLayer)
 {
   L.father=father;
   L.elems.forEach(element => {
     if (element.child!=undefined)
     {
-      var TmpLvl=JSON.parse(JSON.stringify(MODEL[LvlIndex+1][element.child]));
+      var TmpLvl=JSON.parse(JSON.stringify(MODEL[IterSelectedLayer+1][element.child]));
+      if (MODEL[LvlIndex+1] == undefined) MODEL.push([]);
       MODEL[LvlIndex+1].push(TmpLvl);
       element.child=MODEL[LvlIndex+1].length-1;
-      CopyLevels(TmpLvl, LvlIndex+1, MODEL[LvlIndex].indexOf(L));
+      CopyLevels(TmpLvl, LvlIndex+1, MODEL[LvlIndex].indexOf(L), IterSelectedLayer+1);
     }
   });
 }
@@ -408,6 +415,73 @@ function Draw(L, Lindex, i=-1)
           .append("svg")
           .attr("width", w)
           .attr("height", h);
+
+
+
+    svg.call(d3.drag().on("drag", function(){
+      svg.select(".selection")
+        .remove();
+      if (StartingPoint.x == undefined)
+      {
+        StartingPoint.x = d3.mouse(this)[0];
+        StartingPoint.y = d3.mouse(this)[1];
+      }
+      svg.append("polygon")
+        .attr("class", "selection")
+        .attr("points", function(){return d3.mouse(this)[0]+","+d3.mouse(this)[1]+" "+d3.mouse(this)[0]+","+StartingPoint.y+" "+StartingPoint.x+","+StartingPoint.y+" "+StartingPoint.x+","+d3.mouse(this)[1]})
+        .attr("fill", "rgb(0,0,200)")
+        .attr("stroke", "blue")
+        .attr("fill-opacity", 0.15);
+
+      MousePoint.x = d3.mouse(this)[0];
+      MousePoint.y = d3.mouse(this)[1];
+    })
+    .on("end", function(){
+      SelectedBuffer = [];
+      SelectedLvl = current;
+      SelectedLayer = currentlvl;
+      //var i=0;
+      L.elems.forEach(element => {
+        if(element.x<Math.max(MousePoint.x, StartingPoint.x)&&element.x>Math.min(MousePoint.x, StartingPoint.x)&&element.y<Math.max(MousePoint.y, StartingPoint.y)&&element.y>Math.min(MousePoint.y, StartingPoint.y))
+        {
+          SelectedBuffer.push(element);
+        }
+      });
+      svg.select(".selection")
+        .remove();
+      StartingPoint = {};
+    }));
+
+    d3.select("body").on("keydown", function(){
+      var TmpBuffer=[];
+      if (SelectedBuffer.length)
+      {
+        SelectedBuffer.forEach(element => {
+          var tmp={};
+          var TmpLvl={};
+          Object.assign(tmp, element);
+          if (element.child != undefined) 
+          {
+            TmpLvl=JSON.parse(JSON.stringify(MODEL[SelectedLayer+1][element.child]));
+            if (MODEL[Lindex+1] == undefined) MODEL.push([]);
+            tmp.child=MODEL[Lindex+1].length;
+            MODEL[Lindex+1].push(TmpLvl);
+            CopyLevels(MODEL[Lindex+1][tmp.child], Lindex+1, MODEL[Lindex].indexOf(L), SelectedLayer+1);
+          }
+          tmp.copy=true;
+          TmpBuffer.push(tmp);
+        });
+        SelectedLvl.lines.forEach(element => {
+          if (SelectedBuffer.includes(SelectedLvl.elems[element.target])&&SelectedBuffer.includes(SelectedLvl.elems[element.source]))
+            current.lines.push({source: current.elems.length+SelectedBuffer.indexOf(SelectedLvl.elems[element.source]), target: current.elems.length+SelectedBuffer.indexOf(SelectedLvl.elems[element.target])})
+        });
+        TmpBuffer.forEach(element => {
+          current.elems.push(element);
+        });
+        Draw(L, Lindex);
+      }
+    })
+
 
     if (i!=-1 && L.elems[i].hide!=true)
     {
@@ -510,12 +584,12 @@ function Draw(L, Lindex, i=-1)
             var tmp={};
             var TmpLvl={};
             Object.assign(tmp, d);
-            TmpLvl=JSON.parse(JSON.stringify(MODEL[Lindex+1][d.child]));
+            if (d.child != undefined) TmpLvl=JSON.parse(JSON.stringify(MODEL[Lindex+1][d.child]));
             tmp.copy=true;
             if (d.child!=undefined) tmp.child=MODEL[Lindex+1].length;
             current.elems.push(tmp);
             MODEL[Lindex+1].push(TmpLvl);
-            if (d.child!=undefined) CopyLevels(MODEL[Lindex+1][tmp.child], Lindex+1, MODEL[Lindex].indexOf(L));
+            if (d.child!=undefined) CopyLevels(MODEL[Lindex+1][tmp.child], Lindex+1, MODEL[Lindex].indexOf(L), Lindex+1);
             Draw(L, Lindex);
           }
           else{

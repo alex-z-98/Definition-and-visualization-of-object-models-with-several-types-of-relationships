@@ -14,7 +14,9 @@ var w=1272,
   StartingPoint = {},
   MousePoint = {},
   SelectedBuffer = [],
-  SelectedLvl=undefined;
+  SelectedLvl=undefined,
+  SelectedLayer = undefined;
+
 
 var preMODEL={}, preMODELlvl, preMODELnode;
 
@@ -380,16 +382,17 @@ function Undo()
   Draw(MODEL[preMODELlvl][preMODELnode], preMODELlvl);
 }
 
-function CopyLevels(L, LvlIndex, father)
+function CopyLevels(L, LvlIndex, father, IterSelectedLayer)
 {
   L.father=father;
   L.elems.forEach(element => {
     if (element.child!=undefined)
     {
-      var TmpLvl=JSON.parse(JSON.stringify(MODEL[LvlIndex+1][element.child]));
+      var TmpLvl=JSON.parse(JSON.stringify(MODEL[IterSelectedLayer+1][element.child]));
+      if (MODEL[LvlIndex+1] == undefined) MODEL.push([]);
       MODEL[LvlIndex+1].push(TmpLvl);
       element.child=MODEL[LvlIndex+1].length-1;
-      CopyLevels(TmpLvl, LvlIndex+1, MODEL[LvlIndex].indexOf(L));
+      CopyLevels(TmpLvl, LvlIndex+1, MODEL[LvlIndex].indexOf(L), IterSelectedLayer+1);
     }
   });
 }
@@ -436,6 +439,7 @@ function Draw(L, Lindex, i=-1)
     .on("end", function(){
       SelectedBuffer = [];
       SelectedLvl = current;
+      SelectedLayer = currentlvl;
       //var i=0;
       L.elems.forEach(element => {
         if(element.x<Math.max(MousePoint.x, StartingPoint.x)&&element.x>Math.min(MousePoint.x, StartingPoint.x)&&element.y<Math.max(MousePoint.y, StartingPoint.y)&&element.y>Math.min(MousePoint.y, StartingPoint.y))
@@ -449,22 +453,30 @@ function Draw(L, Lindex, i=-1)
     }));
 
     d3.select("body").on("keydown", function(){
+      var TmpBuffer=[];
       if (SelectedBuffer.length)
       {
-        SelectedLvl.lines.forEach(element => {
-          if (SelectedBuffer.includes(SelectedLvl.elems[element.target])&&SelectedBuffer.includes(SelectedLvl.elems[element.source]))
-            current.lines.push({source: current.elems.length+SelectedBuffer.indexOf(SelectedLvl.elems[element.source]), target: current.elems.length+SelectedBuffer.indexOf(SelectedLvl.elems[element.target])})
-        });
         SelectedBuffer.forEach(element => {
           var tmp={};
           var TmpLvl={};
           Object.assign(tmp, element);
-          if (element.child != undefined) TmpLvl=JSON.parse(JSON.stringify(MODEL[Lindex+1][element.child]));
+          if (element.child != undefined) 
+          {
+            TmpLvl=JSON.parse(JSON.stringify(MODEL[SelectedLayer+1][element.child]));
+            if (MODEL[Lindex+1] == undefined) MODEL.push([]);
+            tmp.child=MODEL[Lindex+1].length;
+            MODEL[Lindex+1].push(TmpLvl);
+            CopyLevels(MODEL[Lindex+1][tmp.child], Lindex+1, MODEL[Lindex].indexOf(L), SelectedLayer+1);
+          }
           tmp.copy=true;
-          if (element.child!=undefined) tmp.child=MODEL[Lindex+1].length;
-          current.elems.push(tmp);
-          MODEL[Lindex+1].push(TmpLvl);
-          if (element.child!=undefined) CopyLevels(MODEL[Lindex+1][tmp.child], Lindex+1, MODEL[Lindex].indexOf(L));
+          TmpBuffer.push(tmp);
+        });
+        SelectedLvl.lines.forEach(element => {
+          if (SelectedBuffer.includes(SelectedLvl.elems[element.target])&&SelectedBuffer.includes(SelectedLvl.elems[element.source]))
+            current.lines.push({source: current.elems.length+SelectedBuffer.indexOf(SelectedLvl.elems[element.source]), target: current.elems.length+SelectedBuffer.indexOf(SelectedLvl.elems[element.target])})
+        });
+        TmpBuffer.forEach(element => {
+          current.elems.push(element);
         });
         Draw(L, Lindex);
       }
@@ -577,7 +589,7 @@ function Draw(L, Lindex, i=-1)
             if (d.child!=undefined) tmp.child=MODEL[Lindex+1].length;
             current.elems.push(tmp);
             MODEL[Lindex+1].push(TmpLvl);
-            if (d.child!=undefined) CopyLevels(MODEL[Lindex+1][tmp.child], Lindex+1, MODEL[Lindex].indexOf(L));
+            if (d.child!=undefined) CopyLevels(MODEL[Lindex+1][tmp.child], Lindex+1, MODEL[Lindex].indexOf(L), Lindex+1);
             Draw(L, Lindex);
           }
           else{

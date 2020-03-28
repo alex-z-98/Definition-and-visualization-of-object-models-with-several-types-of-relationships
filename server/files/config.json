@@ -5,210 +5,267 @@
             "elems": [
                 {
                     "image": "server.png",
-                    "x": 209,
-                    "y": 75,
+                    "x": 200,
+                    "y": 70,
                     "child": 1
                 },
                 {
                     "image": "server.png",
-                    "x": 53,
-                    "y": 74,
+                    "x": 50,
+                    "y": 70,
                     "child": 0
                 },
                 {
                     "image": "server.png",
-                    "x": 369,
-                    "y": 71,
+                    "x": 350,
+                    "y": 70,
                     "child": 2
                 },
                 {
                     "image": "server.png",
-                    "x": 528,
-                    "y": 69,
+                    "x": 500,
+                    "y": 70,
                     "child": 3
                 },
                 {
                     "image": "server.png",
-                    "x": 708,
-                    "y": 67,
+                    "x": 650,
+                    "y": 70,
                     "child": 4
                 },
                 {
                     "image": "server.png",
                     "x": 50,
-                    "y": 409,
+                    "y": 410,
                     "child": 5
                 },
                 {
                     "image": "server.png",
-                    "x": 207,
-                    "y": 411,
+                    "x": 200,
+                    "y": 410,
                     "child": 6
                 },
                 {
                     "image": "server.png",
-                    "x": 363,
-                    "y": 405,
+                    "x": 350,
+                    "y": 410,
                     "child": 7
                 },
                 {
                     "image": "server.png",
-                    "x": 526,
-                    "y": 400,
+                    "x": 500,
+                    "y": 410,
                     "child": 8
                 },
                 {
                     "image": "server.png",
-                    "x": 703,
-                    "y": 399,
+                    "x": 650,
+                    "y": 410,
                     "child": 9
                 },
                 {
                     "image": "comut.png",
-                    "x": 879,
-                    "y": 80,
+                    "x": 900,
+                    "y": 70,
                     "info": {
-                        "коммутатор": "Infinity Band"
+                        "коммутатор": "Infini Band"
                     }
                 },
                 {
                     "image": "comut.png",
-                    "x": 895,
-                    "y": 405,
+                    "x": 900,
+                    "y": 410,
                     "info": {
-                        "коммутатор": "Infinity Band"
+                        "коммутатор": "Infini Band"
                     }
                 },
                 {
                     "image": "comut.png",
-                    "x": 1105,
-                    "y": 88,
+                    "x": 1050,
+                    "y": 70,
                     "info": {
                         "коммутатор": "ethernet"
                     }
                 },
                 {
                     "image": "comut1.png",
-                    "x": 52,
-                    "y": 308
+                    "x": 50,
+                    "y": 310
                 },
                 {
                     "image": "comut1.png",
-                    "x": 203,
-                    "y": 305
+                    "x": 200,
+                    "y": 310
                 },
                 {
                     "image": "comut1.png",
-                    "x": 366,
-                    "y": 298
+                    "x": 350,
+                    "y": 310
                 },
                 {
                     "image": "comut1.png",
-                    "x": 522,
-                    "y": 296
+                    "x": 500,
+                    "y": 310
                 },
                 {
                     "image": "comut1.png",
-                    "x": 705,
-                    "y": 291
+                    "x": 650,
+                    "y": 310,
+                    "hide": true
                 },
                 {
                     "image": "comut1.png",
-                    "x": 53,
-                    "y": 177
+                    "x": 95,
+                    "y": 192
                 },
                 {
                     "image": "comut1.png",
-                    "x": 531,
+                    "x": 542,
                     "y": 189
                 },
                 {
                     "image": "comut1.png",
-                    "x": 369,
-                    "y": 186
-                },
-                {
-                    "image": "comut1.png",
-                    "x": 206,
-                    "y": 180
-                },
-                {
-                    "image": "comut1.png",
-                    "x": 702,
+                    "x": 394,
                     "y": 189
+                },
+                {
+                    "image": "comut1.png",
+                    "x": 244,
+                    "y": 191
+                },
+                {
+                    "image": "comut1.png",
+                    "x": 694,
+                    "y": 192
                 },
                 {
                     "image": "comut1.png",
                     "x": 94,
-                    "y": 271
+                    "y": 270
                 },
                 {
                     "image": "comut1.png",
-                    "x": 249,
+                    "x": 247,
                     "y": 267
                 },
                 {
                     "image": "comut1.png",
-                    "x": 409,
-                    "y": 263
+                    "x": 395,
+                    "y": 264
                 },
                 {
                     "image": "comut1.png",
-                    "x": 562,
-                    "y": 259
+                    "x": 542,
+                    "y": 265
                 },
                 {
                     "image": "comut1.png",
-                    "x": 731,
-                    "y": 258
+                    "x": 688,
+                    "y": 268
+                },
+                {
+                    "image": "NetCol8000.jfif",
+                    "x": 125,
+                    "y": 70
+                },
+                {
+                    "image": "NetCol8000.jfif",
+                    "x": 275,
+                    "y": 70
+                },
+                {
+                    "image": "NetCol8000.jfif",
+                    "x": 425,
+                    "y": 70
+                },
+                {
+                    "image": "NetCol8000.jfif",
+                    "x": 575,
+                    "y": 70
+                },
+                {
+                    "image": "NetCol8000.jfif",
+                    "x": 125,
+                    "y": 410
+                },
+                {
+                    "image": "NetCol8000.jfif",
+                    "x": 275,
+                    "y": 410
+                },
+                {
+                    "image": "NetCol8000.jfif",
+                    "x": 425,
+                    "y": 410
+                },
+                {
+                    "image": "NetCol8000.jfif",
+                    "x": 575,
+                    "y": 410
+                },
+                {
+                    "image": "comut1.png",
+                    "x": 662,
+                    "y": 310
                 }
             ],
             "lines": [
                 {
                     "source": 5,
-                    "target": 13
+                    "target": 13,
+                    "type": "Ethernet"
                 },
                 {
                     "source": 6,
-                    "target": 14
+                    "target": 14,
+                    "type": "Ethernet"
                 },
                 {
                     "source": 7,
-                    "target": 15
+                    "target": 15,
+                    "type": "Ethernet"
                 },
                 {
                     "source": 8,
-                    "target": 16
+                    "target": 16,
+                    "type": "Ethernet"
                 },
                 {
                     "source": 9,
-                    "target": 17
+                    "target": 17,
+                    "hide": true
                 },
                 {
                     "source": 13,
-                    "target": 14
+                    "target": 14,
+                    "type": "Ethernet"
                 },
                 {
                     "source": 14,
-                    "target": 15
+                    "target": 15,
+                    "type": "Ethernet"
                 },
                 {
                     "source": 15,
-                    "target": 16
+                    "target": 16,
+                    "type": "Ethernet"
                 },
                 {
                     "source": 16,
-                    "target": 17
+                    "target": 17,
+                    "hide": true
                 },
                 {
                     "source": 11,
                     "target": 17,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand",
+                    "hide": true
                 },
                 {
                     "source": 17,
                     "target": 12,
-                    "type": "Ethernet"
+                    "type": "Ethernet",
+                    "hide": true
                 },
                 {
                     "source": 18,
@@ -229,7 +286,7 @@
                 {
                     "source": 22,
                     "target": 10,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand"
                 },
                 {
                     "source": 22,
@@ -259,52 +316,67 @@
                 {
                     "source": 5,
                     "target": 23,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand"
                 },
                 {
                     "source": 23,
                     "target": 24,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand"
                 },
                 {
                     "source": 6,
                     "target": 24,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand"
                 },
                 {
                     "source": 24,
                     "target": 25,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand"
                 },
                 {
                     "source": 25,
                     "target": 26,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand"
                 },
                 {
                     "source": 26,
                     "target": 27,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand"
                 },
                 {
                     "source": 27,
                     "target": 11,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand"
                 },
                 {
                     "source": 25,
                     "target": 7,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand"
                 },
                 {
                     "source": 8,
                     "target": 26,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand"
                 },
                 {
                     "source": 9,
                     "target": 27,
-                    "type": "InfinityBand"
+                    "type": "InfiniBand"
+                },
+                {
+                    "source": 16,
+                    "target": 36,
+                    "type": "Ethernet"
+                },
+                {
+                    "source": 9,
+                    "target": 36,
+                    "type": "Ethernet"
+                },
+                {
+                    "source": 36,
+                    "target": 12,
+                    "type": "Ethernet"
                 }
             ]
         }
@@ -587,7 +659,7 @@
                     "x": 367,
                     "y": 63.00000762939453,
                     "info": {
-                        "коммутатор": "Infinity Band"
+                        "коммутатор": "Infini Band"
                     }
                 },
                 {
@@ -595,7 +667,7 @@
                     "x": 386,
                     "y": 379,
                     "info": {
-                        "коммутатор": "Infinity Band"
+                        "коммутатор": "Infini Band"
                     }
                 },
                 {

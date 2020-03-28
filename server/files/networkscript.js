@@ -9,8 +9,8 @@ var w=1272,
   currentlvl=undefined,
   linkFlag=false,
   LinkFilter=[];
-  images=["block.png", "door.png", "comut.png", "energy.png", "server.png", "blade2.jpg", "disk.jpg", "comut1.png", "rect.png"],
-  types=["Ethernet", "InfinityBand",],
+  images=["block.png", "door.png", "comut.png", "energy.png", "server.png", "blade2.jpg", "disk.jpg", "comut1.png", "rect.png", "NetCol8000.jfif"],
+  types=["Ethernet", "InfiniBand",],
   StartingPoint = {},
   MousePoint = {},
   SelectedBuffer = [],
@@ -154,13 +154,23 @@ function AddObject()
     .on("click", function(d){
       d3.select("div.selectImg")
         .remove();
-      current.elems.push({image:d, x:300, y:250});
+      var i = 0;
+      var N = document.getElementById("number").value;
+      while (i<N)
+        current.elems.push({image:d, x:300+(i/2-i%2/2)*100, y:250+i++%2*100});
       Draw(current, currentlvl);  
     });
 
   carousel.append("button")
         .attr("class", "arrow next")
         .html("⇨");
+
+  carousel.append("div")
+    .append("input")
+    .attr("type", "search")
+    .attr("placeholder", "Number")
+    .attr("id", "number")
+    .attr("value", 1);
 
   let car = new Carousel( {
     width: 130,
@@ -397,6 +407,46 @@ function CopyLevels(L, LvlIndex, father, IterSelectedLayer)
   });
 }
 
+function ChangeView()
+{
+  ShawHierarchy();
+}
+
+function ShawHierarchy()
+{
+  d3.select("div.canvas")
+    .remove();
+  
+  var l=0;
+  var max=0;
+
+  MODEL.forEach(element =>{
+    if (max<element.length) max=element.length;
+  })
+
+  var HiWidth=max*120;
+
+  var svg=d3.selectAll("body")
+    .append("div")
+    .attr("class", "canvas")
+    .append("svg")
+    .attr("width", HiWidth)
+    .attr("height", h);
+
+  MODEL.forEach(element =>{
+    var i=0;
+    var CurStep = HiWidth/(element.length+1);
+    element.forEach(elem =>{
+      svg.append("rect")
+        .attr("x", CurStep*++i)//100+i++*110)
+        .attr("y", 100+l*100)
+        .attr("width", 100)
+        .attr("height", 50);
+    })
+    l++;
+  }) 
+}
+
 function Draw(L, Lindex, i=-1)
 {
     current=L;
@@ -506,7 +556,7 @@ function Draw(L, Lindex, i=-1)
       .attr("y1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].y+3; return L.elems[d.source].y+hsize/2})
       .attr("x2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].x+5; return L.elems[d.target].x+wsize/2})
       .attr("y2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].y+3; return L.elems[d.target].y+hsize/2})
-      .attr("stroke", function(d){if (LinkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#ccc"})
+      .attr("stroke", function(d){if (LinkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#000000"})
       .attr("type", function(d){return d.type});
 
       svg.selectAll("line.opacity")
@@ -686,7 +736,7 @@ function Draw(L, Lindex, i=-1)
                 .attr("y1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].y+3; return L.elems[d.source].y+hsize/2})
                 .attr("x2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].x+5; return L.elems[d.target].x+wsize/2})
                 .attr("y2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].y+3; return L.elems[d.target].y+hsize/2})
-                .attr("stroke", function(d){if (LinkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#ccc"})
+                .attr("stroke", function(d){if (LinkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#000000"})
                 .attr("type", function(d){return d.type})
                 .lower();
               

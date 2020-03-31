@@ -163,9 +163,13 @@
         <input type="checkbox" name="LinkFilter" value="Ethernet" onchange="FilterChanged('Ethernet')">Ethernet</input>
         <input type="checkbox" name="LinkFilter" value="InfiniBand" onchange="FilterChanged('InfiniBand')">InfiniBand</input>
         <button onclick="ChangeView()">ChangeView</button>
+        <button onclick="CheckStates()">CheckStates</button>
     </div>
 
+    <script src="drain.js"></script>
+    <script src="Globals.js"></script>
     <script src="networkscript.js"></script>
+    <script src="state.js"></script>
 
 
 </body>

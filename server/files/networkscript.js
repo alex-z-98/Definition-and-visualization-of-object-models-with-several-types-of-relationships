@@ -1,27 +1,27 @@
 document.body.oncontextmenu = function(e){ return false; };
 
-var w=1272,
-  h=550,
-  wsize=100,
-  hsize=60,
-  infow=100,
-  current=undefined,
-  currentlvl=undefined,
-  linkFlag=false,
-  LinkFilter=[];
-  images=["block.png", "door.png", "comut.png", "energy.png", "server.png", "blade2.jpg", "disk.jpg", "comut1.png", "rect.png", "NetCol8000.jfif"],
-  types=["Ethernet", "InfiniBand",],
-  StartingPoint = {},
-  MousePoint = {},
-  SelectedBuffer = [],
-  SelectedLvl=undefined,
-  SelectedLayer = undefined;
+// var Global.w=1272,
+//   Global.h=550,
+//   Global.wsize=100,
+//   Global.hsize=60,
+//   infow=100,
+//   Global.current=undefined,
+//   Global.currentlvl=undefined,
+//   Global.linkFlag=false,
+   Global.linkFilter=[];
+//   Global.images=["block.png", "door.png", "comut.png", "energy.png", "server.png", "blade2.jpg", "disk.jpg", "comut1.png", "rect.png", "NetCol8000.jfif"],
+//   Global.types=["Ethernet", "InfiniBand",],
+   Global.StartingPoint = {},
+   Global.MousePoint = {},
+   Global.SelectedBuffer = [],
+//   Global.SelectedLvl=undefined,
+//   Global.SelectedLayer = undefined;
 
 
-var preMODEL={}, preMODELlvl, preMODELnode;
+Global.PreMODEL={}, Global.PreMODELlvl, Global.PreMODELnode;
 
-preMODEL.elems=[];
-preMODEL.lines=[];
+ Global.PreMODEL.elems=[];
+ Global.PreMODEL.lines=[];
 
 
   class Carousel {
@@ -61,7 +61,10 @@ preMODEL.lines=[];
 
 //var L0={father: null, elems:[{type:"block", name:"First room", image:"block.png", info:{name:"First room", type:"room", PCquantity:"3"}, x:200, y:200},{type:"block", name:"Second room", image:"block.png", info:{name:"Second room", type:"room", PCquantity:"2"}, x:200, y:100}, {type:"comut", name:"First comut", image:"comut1.png", x:100, y:150}]};
 //L0.lines=[{source: L0.elems[2], target: L0.elems[0]}, {source: L0.elems[2], target: L0.elems[1]}];
-var MODEL={};
+
+
+Global.MODEL={};
+
 
 $.get(
   "/config.json",
@@ -71,9 +74,9 @@ $.get(
     
 function FilterChanged(value)
 {
-  if (LinkFilter.indexOf(value)!=-1) LinkFilter.splice(LinkFilter.indexOf(value),1);
-  else LinkFilter.push(value);
-  Draw(current, currentlvl);  
+  if (Global.linkFilter.indexOf(value)!=-1) Global.linkFilter.splice(Global.linkFilter.indexOf(value),1);
+  else Global.linkFilter.push(value);
+  Draw(Global.current, Global.currentlvl);  
 }
 
 function onAjaxSuccess(data)
@@ -81,43 +84,43 @@ function onAjaxSuccess(data)
   // Здесь мы получаем данные, отправленные сервером и выводим их на экран.
   //alert(JSON.stringify(data));
   //alert(JSON.parse(JSON.stringify(data)));
-  MODEL=JSON.parse(JSON.stringify(data));
+  Global.MODEL=JSON.parse(JSON.stringify(data));
   //alert(L0.elems[0].name);
   //L0.lines=[{source: L0.elems[2], target: L0.elems[0]}, {source: L0.elems[2], target: L0.elems[1]}];
   //L1=[{father: L0, elems:[{type:"PC", name:"PC1", image:"block.png", id:11, x:250, y:100}, {type:"PC", name:"PC2", image:"block.png", id:12, x:100, y:100}, {type:"PC", name:"PC3", image:"block.png", id:13, x:400, y:100}]},
     //    {father: L0, elems:[{type:"PC", name:"PC1", image:"block.png", id:21, x:400, y:100}, {type:"PC", name:"PC2", image:"block.png", id:22, x:150, y:100}]}];
 
-  //MODEL[0][0].elems[0].child=0;
-  //MODEL[0][0].elems[1].child=1;
+  //Global.MODEL[0][0].elems[0].child=0;
+  //Global.MODEL[0][0].elems[1].child=1;
   // L1[0].lines=[],
   // L1[1].lines=[];
-  Draw(MODEL[0][0], 0);
+  Draw(Global.MODEL[0][0], 0);
 }
 
 function SaveMODEL()
 {
-  preMODEL.father=current.father;
-  preMODEL.elems=[];
-  preMODEL.lines=[];
-  for (var key in current.elems)
+  Global.PreMODEL.father=Global.current.father;
+  Global.PreMODEL.elems=[];
+  Global.PreMODEL.lines=[];
+  for (var key in Global.current.elems)
   {
-    preMODEL.elems[key]={};
-    for (var item in current.elems[key])
+    Global.PreMODEL.elems[key]={};
+    for (var item in Global.current.elems[key])
     {
       //alert(item);
-      preMODEL.elems[key][item]=current.elems[key][item];
+      Global.PreMODEL.elems[key][item]=Global.current.elems[key][item];
     } 
   } 
-  for (var key in current.lines)
+  for (var key in Global.current.lines)
   {
-    preMODEL.lines[key]={};
-    for (var item in current.lines[key])
+    Global.PreMODEL.lines[key]={};
+    for (var item in Global.current.lines[key])
     {
-      preMODEL.lines[key][item]=current.lines[key][item];
+      Global.PreMODEL.lines[key][item]=Global.current.lines[key][item];
     }
   }
-  preMODELlvl=currentlvl;
-  preMODELnode=MODEL[currentlvl].indexOf(current);
+  Global.PreMODELlvl=Global.currentlvl;
+  Global.PreMODELnode=Global.MODEL[Global.currentlvl].indexOf(Global.current);
 }
 
 function AddObject()
@@ -143,10 +146,10 @@ function AddObject()
   var ul=carousel.append("div")
     .attr("class", "gallery")
     .append("ul")
-    .attr("class", "images");
+    .attr("class", "Global.images");
 
   ul.selectAll("li")
-    .data(images)
+    .data(Global.images)
     .enter()
     .append("li")
     .append("img")
@@ -157,8 +160,8 @@ function AddObject()
       var i = 0;
       var N = document.getElementById("number").value;
       while (i<N)
-        current.elems.push({image:d, x:300+(i/2-i%2/2)*100, y:250+i++%2*100});
-      Draw(current, currentlvl);  
+        Global.current.elems.push({image:d, x:300+(i/2-i%2/2)*100, y:250+i++%2*100});
+      Draw(Global.current, Global.currentlvl);  
     });
 
   carousel.append("button")
@@ -178,8 +181,8 @@ function AddObject()
     elem: document.getElementById('carousel')
   } );
 
-  //current.elems.push({image:"block.png", x:300, y:250});
-  //Draw(current, currentlvl);
+  //Global.current.elems.push({image:"block.png", x:300, y:250});
+  //Draw(Global.current, Global.currentlvl);
 }
 
 function AddLink()
@@ -188,26 +191,26 @@ function AddLink()
 
   d3.selectAll("image")
     .on("click", function(d){
-      linkFlag =! linkFlag;
+      Global.linkFlag =! Global.linkFlag;
       //alert(d.name);
-      if (linkFlag)
+      if (Global.linkFlag)
       {
         var tp;
         var LT=document.getElementsByName("LinkType"); 
         for(var i=0; i<LT.length; i++) 
           if (LT[i].checked) 
-           tp=types[i];
-        current.lines.push({source: current.elems.indexOf(d), target: current.elems.indexOf(d), type: tp})
+           tp=Global.types[i];
+        Global.current.lines.push({source: Global.current.elems.indexOf(d), target: Global.current.elems.indexOf(d), type: tp})
         d3.select(this)
-          .attr("width", wsize+6)
-          .attr("height", hsize+6)
+          .attr("width", Global.wsize+6)
+          .attr("height", Global.hsize+6)
           .attr("x", function(d){return d.x-3})
           .attr("y", function(d){return d.y-3});
       }
       else
       {
-        current.lines[current.lines.length-1].target=current.elems.indexOf(d);
-        Draw(current, currentlvl);
+        Global.current.lines[Global.current.lines.length-1].target=Global.current.elems.indexOf(d);
+        Draw(Global.current, Global.currentlvl);
       }
     })
   document.getElementById('Undo').disabled=false;
@@ -215,12 +218,12 @@ function AddLink()
 
 function SearchID(value)
 {
-  MODEL.forEach(function(item, i, arr){
+  Global.MODEL.forEach(function(item, i, arr){
       item.forEach(function(item0, i0, arr0){
           item0.elems.forEach(function(item1, i1, arr1){
               if(item1.id==value)
               {
-                  Draw(MODEL[i][i0], i, i1);
+                  Draw(Global.MODEL[i][i0], i, i1);
                   return 0;
               }
           })
@@ -369,27 +372,27 @@ function Save()
   //alert(JSON.stringify(L0));
   var request = new XMLHttpRequest();
   request.open("POST", "config.json", true);
-  request.send(JSON.stringify(MODEL, "", 4));
+  request.send(JSON.stringify(Global.MODEL, "", 4));
 }
 
 function Undo()
 {
-  //alert(preMODELlvl);
-  //alert(preMODELnode);
-  MODEL[preMODELlvl][preMODELnode].elems=[];
-  MODEL[preMODELlvl][preMODELnode].lines=[];
-  for (var key in preMODEL.elems)
-    MODEL[preMODELlvl][preMODELnode].elems[key]=preMODEL.elems[key];  
-  for (var key in preMODEL.lines)
-    MODEL[preMODELlvl][preMODELnode].lines[key]=preMODEL.lines[key];
-  MODEL[preMODELlvl][preMODELnode].lines = MODEL[preMODELlvl][preMODELnode].lines.filter(function(x) {
+  //alert(Global.PreMODELlvl);
+  //alert(Global.PreMODELnode);
+  Global.MODEL[Global.PreMODELlvl][Global.PreMODELnode].elems=[];
+  Global.MODEL[Global.PreMODELlvl][Global.PreMODELnode].lines=[];
+  for (var key in Global.PreMODEL.elems)
+    Global.MODEL[Global.PreMODELlvl][Global.PreMODELnode].elems[key]=Global.PreMODEL.elems[key];  
+  for (var key in Global.PreMODEL.lines)
+    Global.MODEL[Global.PreMODELlvl][Global.PreMODELnode].lines[key]=Global.PreMODEL.lines[key];
+  Global.MODEL[Global.PreMODELlvl][Global.PreMODELnode].lines = Global.MODEL[Global.PreMODELlvl][Global.PreMODELnode].lines.filter(function(x) {
     return x !== undefined && x !== null; 
   });
-  MODEL[preMODELlvl][preMODELnode].elems = MODEL[preMODELlvl][preMODELnode].elems.filter(function(x) {
+  Global.MODEL[Global.PreMODELlvl][Global.PreMODELnode].elems = Global.MODEL[Global.PreMODELlvl][Global.PreMODELnode].elems.filter(function(x) {
     return x !== undefined && x !== null; 
   });
   document.getElementById('Undo').disabled=true;
-  Draw(MODEL[preMODELlvl][preMODELnode], preMODELlvl);
+  Draw(Global.MODEL[Global.PreMODELlvl][Global.PreMODELnode], Global.PreMODELlvl);
 }
 
 function CopyLevels(L, LvlIndex, father, IterSelectedLayer)
@@ -398,11 +401,11 @@ function CopyLevels(L, LvlIndex, father, IterSelectedLayer)
   L.elems.forEach(element => {
     if (element.child!=undefined)
     {
-      var TmpLvl=JSON.parse(JSON.stringify(MODEL[IterSelectedLayer+1][element.child]));
-      if (MODEL[LvlIndex+1] == undefined) MODEL.push([]);
-      MODEL[LvlIndex+1].push(TmpLvl);
-      element.child=MODEL[LvlIndex+1].length-1;
-      CopyLevels(TmpLvl, LvlIndex+1, MODEL[LvlIndex].indexOf(L), IterSelectedLayer+1);
+      var TmpLvl=JSON.parse(JSON.stringify(Global.MODEL[IterSelectedLayer+1][element.child]));
+      if (Global.MODEL[LvlIndex+1] == undefined) Global.MODEL.push([]);
+      Global.MODEL[LvlIndex+1].push(TmpLvl);
+      element.child=Global.MODEL[LvlIndex+1].length-1;
+      CopyLevels(TmpLvl, LvlIndex+1, Global.MODEL[LvlIndex].indexOf(L), IterSelectedLayer+1);
     }
   });
 }
@@ -420,7 +423,7 @@ function ShawHierarchy()
   var l=0;
   var max=0;
 
-  MODEL.forEach(element =>{
+  Global.MODEL.forEach(element =>{
     if (max<element.length) max=element.length;
   })
 
@@ -431,9 +434,9 @@ function ShawHierarchy()
     .attr("class", "canvas")
     .append("svg")
     .attr("width", HiWidth)
-    .attr("height", h);
+    .attr("height", Global.h);
 
-  MODEL.forEach(element =>{
+  Global.MODEL.forEach(element =>{
     var i=0;
     var CurStep = HiWidth/(element.length+1);
     element.forEach(elem =>{
@@ -449,8 +452,8 @@ function ShawHierarchy()
 
 function Draw(L, Lindex, i=-1)
 {
-    current=L;
-    currentlvl=Lindex;
+    Global.current=L;
+    Global.currentlvl=Lindex;
 
     d3.selectAll("input.back")
             .remove();
@@ -463,70 +466,70 @@ function Draw(L, Lindex, i=-1)
           .append("div")
           .attr("class", "canvas")
           .append("svg")
-          .attr("width", w)
-          .attr("height", h);
+          .attr("width", Global.w)
+          .attr("height", Global.h);
 
 
 
     svg.call(d3.drag().on("drag", function(){
       svg.select(".selection")
         .remove();
-      if (StartingPoint.x == undefined)
+      if (Global.StartingPoint.x == undefined)
       {
-        StartingPoint.x = d3.mouse(this)[0];
-        StartingPoint.y = d3.mouse(this)[1];
+        Global.StartingPoint.x = d3.mouse(this)[0];
+        Global.StartingPoint.y = d3.mouse(this)[1];
       }
       svg.append("polygon")
         .attr("class", "selection")
-        .attr("points", function(){return d3.mouse(this)[0]+","+d3.mouse(this)[1]+" "+d3.mouse(this)[0]+","+StartingPoint.y+" "+StartingPoint.x+","+StartingPoint.y+" "+StartingPoint.x+","+d3.mouse(this)[1]})
+        .attr("points", function(){return d3.mouse(this)[0]+","+d3.mouse(this)[1]+" "+d3.mouse(this)[0]+","+Global.StartingPoint.y+" "+Global.StartingPoint.x+","+Global.StartingPoint.y+" "+Global.StartingPoint.x+","+d3.mouse(this)[1]})
         .attr("fill", "rgb(0,0,200)")
         .attr("stroke", "blue")
         .attr("fill-opacity", 0.15);
 
-      MousePoint.x = d3.mouse(this)[0];
-      MousePoint.y = d3.mouse(this)[1];
+      Global.MousePoint.x = d3.mouse(this)[0];
+      Global.MousePoint.y = d3.mouse(this)[1];
     })
     .on("end", function(){
-      SelectedBuffer = [];
-      SelectedLvl = current;
-      SelectedLayer = currentlvl;
+      Global.SelectedBuffer = [];
+      Global.SelectedLvl = Global.current;
+      Global.SelectedLayer = Global.currentlvl;
       //var i=0;
       L.elems.forEach(element => {
-        if(element.x<Math.max(MousePoint.x, StartingPoint.x)&&element.x>Math.min(MousePoint.x, StartingPoint.x)&&element.y<Math.max(MousePoint.y, StartingPoint.y)&&element.y>Math.min(MousePoint.y, StartingPoint.y))
+        if(element.x<Math.max(Global.MousePoint.x, Global.StartingPoint.x)&&element.x>Math.min(Global.MousePoint.x, Global.StartingPoint.x)&&element.y<Math.max(Global.MousePoint.y, Global.StartingPoint.y)&&element.y>Math.min(Global.MousePoint.y, Global.StartingPoint.y))
         {
-          SelectedBuffer.push(element);
+          Global.SelectedBuffer.push(element);
         }
       });
       svg.select(".selection")
         .remove();
-      StartingPoint = {};
+      Global.StartingPoint = {};
     }));
 
     d3.select("body").on("keydown", function(){
       var TmpBuffer=[];
-      if (SelectedBuffer.length)
+      if (Global.SelectedBuffer.length)
       {
-        SelectedBuffer.forEach(element => {
+        Global.SelectedBuffer.forEach(element => {
           var tmp={};
           var TmpLvl={};
           Object.assign(tmp, element);
           if (element.child != undefined) 
           {
-            TmpLvl=JSON.parse(JSON.stringify(MODEL[SelectedLayer+1][element.child]));
-            if (MODEL[Lindex+1] == undefined) MODEL.push([]);
-            tmp.child=MODEL[Lindex+1].length;
-            MODEL[Lindex+1].push(TmpLvl);
-            CopyLevels(MODEL[Lindex+1][tmp.child], Lindex+1, MODEL[Lindex].indexOf(L), SelectedLayer+1);
+            TmpLvl=JSON.parse(JSON.stringify(Global.MODEL[Global.SelectedLayer+1][element.child]));
+            if (Global.MODEL[Lindex+1] == undefined) Global.MODEL.push([]);
+            tmp.child=Global.MODEL[Lindex+1].length;
+            Global.MODEL[Lindex+1].push(TmpLvl);
+            CopyLevels(Global.MODEL[Lindex+1][tmp.child], Lindex+1, Global.MODEL[Lindex].indexOf(L), Global.SelectedLayer+1);
           }
           tmp.copy=true;
           TmpBuffer.push(tmp);
         });
-        SelectedLvl.lines.forEach(element => {
-          if (SelectedBuffer.includes(SelectedLvl.elems[element.target])&&SelectedBuffer.includes(SelectedLvl.elems[element.source]))
-            current.lines.push({source: current.elems.length+SelectedBuffer.indexOf(SelectedLvl.elems[element.source]), target: current.elems.length+SelectedBuffer.indexOf(SelectedLvl.elems[element.target])})
+        Global.SelectedLvl.lines.forEach(element => {
+          if (Global.SelectedBuffer.includes(Global.SelectedLvl.elems[element.target])&&Global.SelectedBuffer.includes(Global.SelectedLvl.elems[element.source]))
+            Global.current.lines.push({source: Global.current.elems.length+Global.SelectedBuffer.indexOf(Global.SelectedLvl.elems[element.source]), target: Global.current.elems.length+Global.SelectedBuffer.indexOf(Global.SelectedLvl.elems[element.target])})
         });
         TmpBuffer.forEach(element => {
-          current.elems.push(element);
+          Global.current.elems.push(element);
         });
         Draw(L, Lindex);
       }
@@ -543,8 +546,8 @@ function Draw(L, Lindex, i=-1)
             .attr("fill", "rgb(0,0,200)")
             .attr("fill-opacity", 0.15)
             .attr("stroke-opacity", 0.5)
-            .attr("width", wsize+10)
-            .attr("height", hsize+10);
+            .attr("width", Global.wsize+10)
+            .attr("height", Global.hsize+10);
     }
 
       svg.selectAll("line.connect")
@@ -552,11 +555,11 @@ function Draw(L, Lindex, i=-1)
       .enter()
       .append("line")
       .attr("class", function(d){ if (d.hide==true) return "hide"; return "connect";})
-      .attr("x1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].x+5; return L.elems[d.source].x+wsize/2})
-      .attr("y1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].y+3; return L.elems[d.source].y+hsize/2})
-      .attr("x2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].x+5; return L.elems[d.target].x+wsize/2})
-      .attr("y2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].y+3; return L.elems[d.target].y+hsize/2})
-      .attr("stroke", function(d){if (LinkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#000000"})
+      .attr("x1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].x+5; return L.elems[d.source].x+Global.wsize/2})
+      .attr("y1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].y+3; return L.elems[d.source].y+Global.hsize/2})
+      .attr("x2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].x+5; return L.elems[d.target].x+Global.wsize/2})
+      .attr("y2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].y+3; return L.elems[d.target].y+Global.hsize/2})
+      .attr("stroke", function(d){if (Global.linkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#000000"})
       .attr("type", function(d){return d.type});
 
       svg.selectAll("line.opacity")
@@ -564,11 +567,11 @@ function Draw(L, Lindex, i=-1)
       .enter()
       .append("line")
       .attr("class", function(d){ if (d.hide==true) return "hide"; return "opacity";})
-      .attr("x1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].x+5; return L.elems[d.source].x+wsize/2})
-      .attr("y1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].y+3; return L.elems[d.source].y+hsize/2})
-      .attr("x2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].x+5; return L.elems[d.target].x+wsize/2})
-      .attr("y2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].y+3; return L.elems[d.target].y+hsize/2})
-      .attr("stroke", function(d){if (LinkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#ccc"})
+      .attr("x1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].x+5; return L.elems[d.source].x+Global.wsize/2})
+      .attr("y1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].y+3; return L.elems[d.source].y+Global.hsize/2})
+      .attr("x2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].x+5; return L.elems[d.target].x+Global.wsize/2})
+      .attr("y2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].y+3; return L.elems[d.target].y+Global.hsize/2})
+      .attr("stroke", function(d){if (Global.linkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#ccc"})
       .attr("stroke-width", function(d){return 8})
       .attr("stroke-opacity", function(d){return 0})
       .attr("type", function(d){return d.type})
@@ -588,12 +591,13 @@ function Draw(L, Lindex, i=-1)
         .data(L.elems)
         .enter()
         .append("image")
+        .attr("id", function(d){ if(d.id) return d.id; })
         .attr("class", function(d){ if (d.hide==true) return "hide"; return d.type;})
         .attr("xlink:href", function(d){return d.image;})
         .attr("x", function(d){ return d.x;})
         .attr("y", function(d){ return d.y;})
-        .attr("width", function(d){ if (d.image=="comut1.png" || d.image=="rect.png") return 10; return wsize;})
-        .attr("height", function(d){ if (d.image=="comut1.png" || d.image=="rect.png") return 6; return hsize;})
+        .attr("width", function(d){ if (d.image=="comut1.png" || d.image=="rect.png") return 10; return Global.wsize;})
+        .attr("height", function(d){ if (d.image=="comut1.png" || d.image=="rect.png") return 6; return Global.hsize;})
         .on("click", function(d){
           if (d3.event.ctrlKey)
           {
@@ -624,27 +628,27 @@ function Draw(L, Lindex, i=-1)
           }
           else if (d3.event.altKey)
           {
-            if (MODEL[Lindex+1]==undefined) MODEL[Lindex+1]=[];
-            MODEL[Lindex+1].push({father:MODEL[Lindex].indexOf(L), elems:[], lines:[]});
-            d.child=MODEL[Lindex+1].length-1;
-            Draw(MODEL[Lindex+1][MODEL[Lindex+1].length-1], Lindex+1);
+            if (Global.MODEL[Lindex+1]==undefined) Global.MODEL[Lindex+1]=[];
+            Global.MODEL[Lindex+1].push({father:Global.MODEL[Lindex].indexOf(L), elems:[], lines:[]});
+            d.child=Global.MODEL[Lindex+1].length-1;
+            Draw(Global.MODEL[Lindex+1][Global.MODEL[Lindex+1].length-1], Lindex+1);
           }
           else if (d3.event.shiftKey)
           {
             var tmp={};
             var TmpLvl={};
             Object.assign(tmp, d);
-            if (d.child != undefined) TmpLvl=JSON.parse(JSON.stringify(MODEL[Lindex+1][d.child]));
+            if (d.child != undefined) TmpLvl=JSON.parse(JSON.stringify(Global.MODEL[Lindex+1][d.child]));
             tmp.copy=true;
-            if (d.child!=undefined) tmp.child=MODEL[Lindex+1].length;
-            current.elems.push(tmp);
-            MODEL[Lindex+1].push(TmpLvl);
-            if (d.child!=undefined) CopyLevels(MODEL[Lindex+1][tmp.child], Lindex+1, MODEL[Lindex].indexOf(L), Lindex+1);
+            if (d.child!=undefined) tmp.child=Global.MODEL[Lindex+1].length;
+            Global.current.elems.push(tmp);
+            Global.MODEL[Lindex+1].push(TmpLvl);
+            if (d.child!=undefined) CopyLevels(Global.MODEL[Lindex+1][tmp.child], Lindex+1, Global.MODEL[Lindex].indexOf(L), Lindex+1);
             Draw(L, Lindex);
           }
           else{
             if(d.child!=undefined)
-                Draw(MODEL[Lindex+1][d.child], Lindex+1);}})
+                Draw(Global.MODEL[Lindex+1][d.child], Lindex+1);}})
         .on("contextmenu", function(d){
           
           d3.selectAll("div.tabl")
@@ -705,11 +709,11 @@ function Draw(L, Lindex, i=-1)
                   .enter()
                   .append("line")
                   .attr("class", function(d){ if (d.hide==true) return "hide"; return "opacity";})
-                  .attr("x1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].x+5; return L.elems[d.source].x+wsize/2})
-                  .attr("y1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].y+3; return L.elems[d.source].y+hsize/2})
-                  .attr("x2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].x+5; return L.elems[d.target].x+wsize/2})
-                  .attr("y2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].y+3; return L.elems[d.target].y+hsize/2})
-                  .attr("stroke", function(d){if (LinkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#ccc"})
+                  .attr("x1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].x+5; return L.elems[d.source].x+Global.wsize/2})
+                  .attr("y1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].y+3; return L.elems[d.source].y+Global.hsize/2})
+                  .attr("x2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].x+5; return L.elems[d.target].x+Global.wsize/2})
+                  .attr("y2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].y+3; return L.elems[d.target].y+Global.hsize/2})
+                  .attr("stroke", function(d){if (Global.linkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#ccc"})
                   .attr("stroke-width", function(d){return 8})
                   .attr("stroke-opacity", function(d){return 0})
                   .attr("type", function(d){return d.type})
@@ -732,11 +736,11 @@ function Draw(L, Lindex, i=-1)
                 .enter()
                 .append("line")
                 .attr("class", function(d){ if (d.hide==true) return "hide"; return "connect";})
-                .attr("x1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].x+5; return L.elems[d.source].x+wsize/2})
-                .attr("y1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].y+3; return L.elems[d.source].y+hsize/2})
-                .attr("x2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].x+5; return L.elems[d.target].x+wsize/2})
-                .attr("y2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].y+3; return L.elems[d.target].y+hsize/2})
-                .attr("stroke", function(d){if (LinkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#000000"})
+                .attr("x1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].x+5; return L.elems[d.source].x+Global.wsize/2})
+                .attr("y1", function(d){if (L.elems[d.source].image=="rect.png" || L.elems[d.source].image=="comut1.png") return L.elems[d.source].y+3; return L.elems[d.source].y+Global.hsize/2})
+                .attr("x2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].x+5; return L.elems[d.target].x+Global.wsize/2})
+                .attr("y2", function(d){if (L.elems[d.target].image=="rect.png" || L.elems[d.target].image=="comut1.png") return L.elems[d.target].y+3; return L.elems[d.target].y+Global.hsize/2})
+                .attr("stroke", function(d){if (Global.linkFilter.indexOf(d.type)!=-1) return "#5b92e5"; return "#000000"})
                 .attr("type", function(d){return d.type})
                 .lower();
               
@@ -745,7 +749,7 @@ function Draw(L, Lindex, i=-1)
               }));
 
     if(L.father!=null){
-        F=MODEL[Lindex-1][L.father];
+        F=Global.MODEL[Lindex-1][L.father];
         Lfather=Lindex-1;
         d3.selectAll("div.canvas")
               .append("input")
@@ -757,4 +761,6 @@ function Draw(L, Lindex, i=-1)
 
     svg.selectAll(".hide")
       .remove();
+
+    CheckStates();
 }

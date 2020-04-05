@@ -159,8 +159,9 @@ function AddObject()
         .remove();
       var i = 0;
       var N = document.getElementById("number").value;
+      var xValue = parseFloat(document.getElementById("xValue").value);
       while (i<N)
-        Global.current.elems.push({image:d, x:300+(i/2-i%2/2)*100, y:250+i++%2*100});
+        Global.current.elems.push({image:d, y:300+(i/2-i%2/2)*30, x: xValue+i++%2*200});
       Draw(Global.current, Global.currentlvl);  
     });
 
@@ -168,12 +169,19 @@ function AddObject()
         .attr("class", "arrow next")
         .html("⇨");
 
-  carousel.append("div")
-    .append("input")
+  var div = carousel.append("div");
+    
+  div.append("input")
     .attr("type", "search")
     .attr("placeholder", "Number")
     .attr("id", "number")
     .attr("value", 1);
+
+  div.append("input")
+    .attr("type", "search")
+    .attr("placeholder", "Number")
+    .attr("id", "xValue")
+    .attr("value", 250);
 
   let car = new Carousel( {
     width: 130,
@@ -490,6 +498,10 @@ function Draw(L, Lindex, i=-1)
       Global.MousePoint.y = d3.mouse(this)[1];
     })
     .on("end", function(){
+      //alert("Drag Ended")
+      L.elems.forEach(element => {
+        element.selected = false;
+      });
       Global.SelectedBuffer = [];
       Global.SelectedLvl = Global.current;
       Global.SelectedLayer = Global.currentlvl;
@@ -497,6 +509,7 @@ function Draw(L, Lindex, i=-1)
       L.elems.forEach(element => {
         if(element.x<Math.max(Global.MousePoint.x, Global.StartingPoint.x)&&element.x>Math.min(Global.MousePoint.x, Global.StartingPoint.x)&&element.y<Math.max(Global.MousePoint.y, Global.StartingPoint.y)&&element.y>Math.min(Global.MousePoint.y, Global.StartingPoint.y))
         {
+          element.selected = true;
           Global.SelectedBuffer.push(element);
         }
       });
@@ -506,7 +519,8 @@ function Draw(L, Lindex, i=-1)
     }));
 
     d3.select("body").on("keydown", function(){
-      var TmpBuffer=[];
+      var TmpBuffer=[]; 
+      //alert("Keydown")
       if (Global.SelectedBuffer.length)
       {
         Global.SelectedBuffer.forEach(element => {
@@ -593,7 +607,7 @@ function Draw(L, Lindex, i=-1)
         .append("image")
         .attr("id", function(d){ if(d.id) return d.id; })
         .attr("class", function(d){ if (d.hide==true) return "hide"; return d.type;})
-        .attr("xlink:href", function(d){return d.image;})
+        .attr("href", function(d){return d.image;})
         .attr("x", function(d){ return d.x;})
         .attr("y", function(d){ return d.y;})
         .attr("width", function(d){ if (d.image=="comut1.png" || d.image=="rect.png") return 10; return Global.wsize;})
@@ -693,10 +707,27 @@ function Draw(L, Lindex, i=-1)
             .on("click", function(c){Change(d)});
         })
         .call(d3.drag().on("drag", function(d){
-              d3.select(this)
+              var StartX = d.x,
+              StartY = d.y;
+          
+
+              
+
+
+              if(!d.selected)
+               d3.select(this)
                 .raise()
                 .attr("x", d.x = d3.event.x)
                 .attr("y", d.y = d3.event.y);
+              else
+                svg.selectAll("image")
+                .attr("x", function(d){if(d.selected==true){console.log(StartX - d.x); return d.x = d3.event.x + (d.x-StartX)} return d.x})
+                .attr("y", function(d){if(d.selected==true){return d.y = d3.event.y + (d.y - StartY)} return d.y})
+                .lower();
+
+
+
+
                 
                 svg.selectAll("line")
                   .remove();

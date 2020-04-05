@@ -141,6 +141,10 @@
 .gallery li {
   display: inline-block;
 }
+
+image{
+  background-size: 100%;
+}
  
 </style>
 
@@ -164,6 +168,8 @@
         <input type="checkbox" name="LinkFilter" value="InfiniBand" onchange="FilterChanged('InfiniBand')">InfiniBand</input>
         <button onclick="ChangeView()">ChangeView</button>
         <button onclick="CheckStates()">CheckStates</button>
+        <button onclick="AddMultiLink()">MultiConnect</button>
+        <button onclick="PhysicalView()">PhysicalView</button>
     </div>
 
     <script src="drain.js"></script>

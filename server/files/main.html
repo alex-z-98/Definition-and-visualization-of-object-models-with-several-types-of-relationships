@@ -82,6 +82,24 @@
   top: 150px;
 }
 
+.PoolC {
+  position: absolute;
+  width: 600px;
+  padding: 10px 40px;
+  border: 1px solid #CCC;
+  border-radius: 15px;
+  background: #eee;
+  left: 300px;
+  top: 150px;
+}
+
+.PoolCo{
+  width: 550px;
+  height: 500px;
+  overflow: scroll;
+}
+
+
 .carousel img {
   width: 130px;
   height: 130px;
@@ -166,10 +184,12 @@ image{
         <button id="Undo" onclick="Undo()" disabled>Undo</button>
         <input type="checkbox" name="LinkFilter" value="Ethernet" onchange="FilterChanged('Ethernet')">Ethernet</input>
         <input type="checkbox" name="LinkFilter" value="InfiniBand" onchange="FilterChanged('InfiniBand')">InfiniBand</input>
-        <button onclick="ChangeView()">ChangeView</button>
+        <!-- <button onclick="ChangeView()">ChangeView</button> -->
         <button onclick="CheckStates()">CheckStates</button>
         <button onclick="AddMultiLink()">MultiConnect</button>
-        <button onclick="PhysicalView()">PhysicalView</button>
+        <!--<button onclick="PhysicalView()">PhysicalView</button>-->
+        <!-- <button onclick="AddContainer()">AddContainer</button> -->
+        <button onclick="Rotate()">Rotate</button>
     </div>
 
     <script src="drain.js"></script>

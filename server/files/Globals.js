@@ -12,6 +12,7 @@ Global = {
     types: ["Ethernet", "InfiniBand",],
     StartingPoint: {},
     MousePoint: {},
+    Mouse:{x:0, y:0},
     SelectedBuffer: undefined,
     SelectedLvl: undefined,
     SelectedLayer: undefined,

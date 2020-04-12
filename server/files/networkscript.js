@@ -477,7 +477,10 @@ function Draw(L, Lindex, i=-1)
           .attr("width", Global.w)
           .attr("height", Global.h);
 
-
+    svg.on("mousemove", function(){
+      Global.Mouse.x=event.pageX;
+      Global.Mouse.y=event.pageY; 
+    })
 
     svg.call(d3.drag().on("drag", function(){
       svg.select(".selection")
@@ -519,7 +522,17 @@ function Draw(L, Lindex, i=-1)
     }));
 
     d3.select("body").on("keydown", function(){
-      var TmpBuffer=[]; 
+      //alert(d3.event.keyCode);
+      if(d3.event.keyCode == 67)
+      {
+        var TmpBuffer=[];
+        var minX = Global.w, minY = Global.h;
+        Global.SelectedBuffer.forEach(element => {
+          if(element.x<minX)
+            minX = element.x;
+          if(element.y<minY)
+            minY = element.y;
+      });
       //alert("Keydown")
       if (Global.SelectedBuffer.length)
       {
@@ -544,8 +557,11 @@ function Draw(L, Lindex, i=-1)
         });
         TmpBuffer.forEach(element => {
           Global.current.elems.push(element);
+          element.x = Global.Mouse.x + element.x - minX;
+          element.y = Global.Mouse.y + element.y - minY;
         });
         Draw(L, Lindex);
+      }
       }
     })
 
@@ -591,13 +607,14 @@ function Draw(L, Lindex, i=-1)
       .attr("type", function(d){return d.type})
       .on("mouseover", function(d){
         svg.append("text")
+        .attr("class", "definition")
         .attr("x", function(){ return (event.target.x2.baseVal.value+event.target.x1.baseVal.value)/2;})
         .attr("y", function(){ return (event.target.y2.baseVal.value+event.target.y1.baseVal.value)/2;})
         .attr("id", "LinkDescription")
         .html(d.type);
       })
       .on("mouseout", function(){
-        svg.selectAll("text")
+        svg.selectAll("text.definition")
           .remove();
       });
     
@@ -717,11 +734,11 @@ function Draw(L, Lindex, i=-1)
               if(!d.selected)
                d3.select(this)
                 .raise()
-                .attr("x", d.x = d3.event.x)
-                .attr("y", d.y = d3.event.y);
+                .attr("x", d.x = Math.round(d3.event.x/20)*20)
+                .attr("y", d.y = Math.round(d3.event.y/20)*20);
               else
                 svg.selectAll("image")
-                .attr("x", function(d){if(d.selected==true){console.log(StartX - d.x); return d.x = d3.event.x + (d.x-StartX)} return d.x})
+                .attr("x", function(d){if(d.selected==true){return d.x = d3.event.x + (d.x-StartX)} return d.x})
                 .attr("y", function(d){if(d.selected==true){return d.y = d3.event.y + (d.y - StartY)} return d.y})
                 .lower();
 

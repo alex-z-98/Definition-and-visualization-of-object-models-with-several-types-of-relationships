@@ -161,7 +161,14 @@ function AddObject()
       var N = document.getElementById("number").value;
       var xValue = parseFloat(document.getElementById("xValue").value);
       while (i<N)
-        Global.current.elems.push({image:d, y:300+(i/2-i%2/2)*30, x: xValue+i++%2*200});
+      {
+        Global.current.elems.push({image:d, y:300+(i/2-i%2/2)*50, x: xValue+i%2*200, info:{}});
+        if (document.getElementById("CheckPool").checked)
+          Global.current.elems[Global.current.elems.length-1].info.Pool = parseInt(document.getElementById("StartIndex").value);
+        if (document.getElementById("CheckIndex").checked)
+          Global.current.elems[Global.current.elems.length-1].info.index = parseInt(document.getElementById("StartIndex").value)+i;
+        i++;
+      }
       Draw(Global.current, Global.currentlvl);  
     });
 
@@ -182,6 +189,36 @@ function AddObject()
     .attr("placeholder", "Number")
     .attr("id", "xValue")
     .attr("value", 250);
+
+  var p =div.append("p");
+
+  p.append("input")
+    .attr("type", "search")
+    .attr("id", "StartIndex")
+    .attr("disabled", "true");
+
+  p.append("input")
+    .attr("type", "checkbox")
+    .attr("id", "CheckIndex")
+    .attr("onchange", "document.getElementById('StartIndex').disabled = !this.checked");
+
+  p.append("label")
+    .html("Index");
+
+  var p =div.append("p");
+
+  p.append("input")
+    .attr("type", "search")
+    .attr("id", "PoolInit")
+    .attr("disabled", "true");
+
+  p.append("input")
+    .attr("type", "checkbox")
+    .attr("id", "CheckPool")
+    .attr("onchange", "document.getElementById('PoolInit').disabled = !this.checked");
+
+  p.append("label")
+    .html("Pool");
 
   let car = new Carousel( {
     width: 130,
@@ -523,7 +560,7 @@ function Draw(L, Lindex, i=-1)
 
     d3.select("body").on("keydown", function(){
       //alert(d3.event.keyCode);
-      if(d3.event.keyCode == 67)
+      if(d3.event.keyCode == 67 || d3.event.keyCode>=48 && d3.event.keyCode<=57)
       {
         var TmpBuffer=[];
         var minX = Global.w, minY = Global.h;
@@ -532,7 +569,7 @@ function Draw(L, Lindex, i=-1)
             minX = element.x;
           if(element.y<minY)
             minY = element.y;
-      });
+        });
       //alert("Keydown")
       if (Global.SelectedBuffer.length)
       {
@@ -557,6 +594,7 @@ function Draw(L, Lindex, i=-1)
         });
         TmpBuffer.forEach(element => {
           Global.current.elems.push(element);
+          if(d3.event.keyCode>=48 && d3.event.keyCode<=57) Global.current.elems[Global.current.elems.length-1].info.Pool = d3.event.keyCode - 48;
           element.x = Global.Mouse.x + element.x - minX;
           element.y = Global.Mouse.y + element.y - minY;
         });

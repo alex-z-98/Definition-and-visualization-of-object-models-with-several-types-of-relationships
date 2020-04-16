@@ -22,5 +22,10 @@ Global = {
     }, 
     preMODELlvl: undefined, 
     preMODELnode: undefined,
-    MODEL:undefined
+    MODEL:undefined,
+    tmpl: {
+        preamble: "n",
+        items: ["rack", "Pool", "index"],
+        len: [2, 1, 3]
+    }
 }

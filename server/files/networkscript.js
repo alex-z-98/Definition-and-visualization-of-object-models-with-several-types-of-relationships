@@ -1,5 +1,6 @@
 document.body.oncontextmenu = function(e){ return false; };
 
+
 // var Global.w=1272,
 //   Global.h=550,
 //   Global.wsize=100,
@@ -162,11 +163,48 @@ function AddObject()
       var xValue = parseFloat(document.getElementById("xValue").value);
       while (i<N)
       {
-        Global.current.elems.push({image:d, y:300+(i/2-i%2/2)*50, x: xValue+i%2*200, info:{}});
+        Global.current.elems.push({image:d, y:300+(i/2-i%2/2)*50, x: xValue+i%2*200, info:{type:document.getElementById("TypeInput").value}});
         if (document.getElementById("CheckPool").checked)
           Global.current.elems[Global.current.elems.length-1].info.Pool = parseInt(document.getElementById("StartIndex").value);
         if (document.getElementById("CheckIndex").checked)
           Global.current.elems[Global.current.elems.length-1].info.index = parseInt(document.getElementById("StartIndex").value)+i;
+        if (document.getElementById("CheckID").checked)
+        {
+          calculateID(Global.current.elems[Global.current.elems.length-1], Global.currentlvl, Global.current)
+          // var j = 0;
+          // Global.current.elems[Global.current.elems.length-1].id = "";
+          // Global.current.elems[Global.current.elems.length-1].id += Global.tmpl.preamble;
+          // Global.tmpl.items.forEach(element => {
+          //   var lvl = Global.currentlvl,
+          //   f = Global.current;
+          //   if(element == "Pool" && Global.current.elems[Global.current.elems.length-1].info.Pool!=undefined) 
+          //   {
+          //     Global.current.elems[Global.current.elems.length-1].id += '0'.repeat(Global.tmpl.len[j] - Global.current.elems[Global.current.elems.length-1].info.Pool.toString().length)
+          //     Global.current.elems[Global.current.elems.length-1].id += Global.current.elems[Global.current.elems.length-1].info.Pool;
+          //     j++;
+          //     return;
+          //   }
+          //   if(element == "index")
+          //   {
+          //     Global.current.elems[Global.current.elems.length-1].id += '0'.repeat(Global.tmpl.len[j] - Global.current.elems[Global.current.elems.length-1].info.index.toString().length)
+          //     Global.current.elems[Global.current.elems.length-1].id += Global.current.elems[Global.current.elems.length-1].info.index;
+          //     j++;
+          //     return;
+          //   }
+          //   while(lvl>0)
+          //   {
+          //     if (Global.MODEL[lvl-1][f.father].elems[f.fatherIndex].info.type == element)
+          //     {
+          //       Global.current.elems[Global.current.elems.length-1].id += '0'.repeat(Global.tmpl.len[j] - Global.MODEL[lvl-1][f.father].elems[f.fatherIndex].info.index.toString().length)
+          //       Global.current.elems[Global.current.elems.length-1].id += Global.MODEL[lvl-1][f.father].elems[f.fatherIndex].info.index;
+          //       j++;
+          //       break;
+          //     }
+          //     lvl--;
+          //     f=Global.MODEL[lvl][f.father];
+          //   }
+          //});
+        }
         i++;
       }
       Draw(Global.current, Global.currentlvl);  
@@ -190,6 +228,11 @@ function AddObject()
     .attr("id", "xValue")
     .attr("value", 250);
 
+  div.append("input")
+    .attr("type", "search")
+    .attr("placeholder", "Type")
+    .attr("id", "TypeInput");
+
   var p =div.append("p");
 
   p.append("input")
@@ -205,7 +248,7 @@ function AddObject()
   p.append("label")
     .html("Index");
 
-  var p =div.append("p");
+  p =div.append("p");
 
   p.append("input")
     .attr("type", "search")
@@ -219,6 +262,15 @@ function AddObject()
 
   p.append("label")
     .html("Pool");
+
+  p = div.append("p")
+
+  p.append("input")
+    .attr("type", "checkbox")
+    .attr("id", "CheckID");
+
+  p.append("label")
+    .html("ID");
 
   let car = new Carousel( {
     width: 130,
@@ -275,19 +327,88 @@ function SearchID(value)
       })})
 }
 
+function findID(child, lvl)
+{
+  child.elems.forEach(element => {
+    if(element.id != undefined)
+    {
+      calculateID(element, lvl, child);
+      return;
+    }
+    if(element.child != undefined)
+    {
+      findID(Global.MODEL[lvl+1][element.child], lvl+1);
+    }
+  });
+}
+
+function calculateID(d, startingLvl, startingObj)
+{
+  var j = 0;
+  d.id = "";
+  d.id += Global.tmpl.preamble;
+  Global.tmpl.items.forEach(element => {
+    var lvl = startingLvl,
+    f = startingObj;
+    if(element == "Pool" && d.info.Pool!=undefined) 
+    {
+      d.id += '0'.repeat(Global.tmpl.len[j] - d.info.Pool.toString().length)
+      d.id += d.info.Pool;
+      j++;
+      return;
+    }
+    if(element == "index")
+    {
+      d.id += '0'.repeat(Global.tmpl.len[j] - d.info.index.toString().length)
+      d.id += d.info.index;
+      j++;
+      return;
+    }
+    while(lvl>0)
+    {
+      if (Global.MODEL[lvl-1][f.father].elems[f.fatherIndex].info.type == element)
+      {
+        d.id += '0'.repeat(Global.tmpl.len[j] - Global.MODEL[lvl-1][f.father].elems[f.fatherIndex].info.index.toString().length)
+        d.id += Global.MODEL[lvl-1][f.father].elems[f.fatherIndex].info.index;
+        j++;
+        break;
+      }
+      lvl--;
+      f=Global.MODEL[lvl][f.father];
+    }
+  });
+}
+
 function ApplyChanges(d)
 {
   var i=0;
-  d.info={};
+  var tmpInfo={};
+  //d.info={};
   var propertyRaws = document.getElementsByTagName("p");
   while (propertyRaws.item(i)!=null)
   {
     //alert(propertyRaws[i].getElementsByClassName("name")[0].value);
     newkey = propertyRaws[i].getElementsByClassName("name")[0].value;
     valuekey = propertyRaws[i].getElementsByClassName("value")[0].value;
-    if (newkey != "") d.info[newkey]=valuekey;
+    if (newkey != "") tmpInfo[newkey]=valuekey;
     i++;
   }
+
+  if (tmpInfo.index!=undefined && tmpInfo.index != d.info.index)
+  {
+    d.info = tmpInfo;
+    if (d.id != undefined)
+      calculateID(d, Global.currentlvl, Global.current);
+    else
+      if(d.child != undefined)
+        findID(Global.MODEL[Global.currentlvl+1][d.child], Global.currentlvl+1);
+  }
+  else
+  {
+    d.info = tmpInfo;
+  }
+
+
   d3.selectAll("div.tabl")
     .remove();
 
@@ -312,6 +433,17 @@ function ApplyChanges(d)
     
     row.append("th")
       .html("Value");
+
+  if (d.id!=undefined)
+  {
+    row=tab.append("tr");
+
+    row.append("td")
+      .html("id");
+
+    row.append("td")
+      .html(d.id);
+  };
 
   for (var key in d.info)
   {
@@ -576,6 +708,7 @@ function Draw(L, Lindex, i=-1)
         Global.SelectedBuffer.forEach(element => {
           var tmp={};
           var TmpLvl={};
+          var i=0;
           Object.assign(tmp, element);
           if (element.child != undefined) 
           {
@@ -583,6 +716,7 @@ function Draw(L, Lindex, i=-1)
             if (Global.MODEL[Lindex+1] == undefined) Global.MODEL.push([]);
             tmp.child=Global.MODEL[Lindex+1].length;
             Global.MODEL[Lindex+1].push(TmpLvl);
+            Global.MODEL[Lindex+1][Global.MODEL[Lindex+1].length-1].fatherIndex = Global.current.elems.length+i++;
             CopyLevels(Global.MODEL[Lindex+1][tmp.child], Lindex+1, Global.MODEL[Lindex].indexOf(L), Global.SelectedLayer+1);
           }
           tmp.copy=true;
@@ -698,7 +832,7 @@ function Draw(L, Lindex, i=-1)
           else if (d3.event.altKey)
           {
             if (Global.MODEL[Lindex+1]==undefined) Global.MODEL[Lindex+1]=[];
-            Global.MODEL[Lindex+1].push({father:Global.MODEL[Lindex].indexOf(L), elems:[], lines:[]});
+            Global.MODEL[Lindex+1].push({father:Global.MODEL[Lindex].indexOf(L), fatherIndex:Global.current.elems.indexOf(d), elems:[], lines:[]});
             d.child=Global.MODEL[Lindex+1].length-1;
             Draw(Global.MODEL[Lindex+1][Global.MODEL[Lindex+1].length-1], Lindex+1);
           }
@@ -744,6 +878,18 @@ function Draw(L, Lindex, i=-1)
             
             row.append("th")
               .html("Value");
+
+
+          if (d.id!=undefined)
+          {
+            row=tab.append("tr");
+
+            row.append("td")
+              .html("id");
+
+            row.append("td")
+              .html(d.id);
+          };
 
           for (var key in d.info)
           {

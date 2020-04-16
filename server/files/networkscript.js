@@ -272,6 +272,19 @@ function AddObject()
   p.append("label")
     .html("ID");
 
+  p = div.append("p")
+    
+  p.append("label")
+    .html("Width(for container):")
+
+  p.append("input")
+    .attr("id", "ContainerWidth")
+    .attr("value", 200);
+
+  div.append("button")
+    .attr("onclick", "AddContainer()")
+    .html("AddContainer");
+
   let car = new Carousel( {
     width: 130,
     count: 3,
@@ -286,7 +299,7 @@ function AddLink()
 {
   SaveMODEL();
 
-  d3.selectAll("image")
+  d3.selectAll("svg.object")
     .on("click", function(d){
       Global.linkFlag =! Global.linkFlag;
       //alert(d.name);
@@ -394,7 +407,7 @@ function ApplyChanges(d)
     i++;
   }
 
-  if (tmpInfo.index!=undefined && tmpInfo.index != d.info.index)
+  if (tmpInfo.index!=undefined && tmpInfo.index != d.info.index || tmpInfo.Pool != undefined && tmpInfo.Pool != d.info.Pool)
   {
     d.info = tmpInfo;
     if (d.id != undefined)
@@ -408,6 +421,7 @@ function ApplyChanges(d)
     d.info = tmpInfo;
   }
 
+  Draw(Global.current, Global.currentlvl);
 
   d3.selectAll("div.tabl")
     .remove();
@@ -728,7 +742,12 @@ function Draw(L, Lindex, i=-1)
         });
         TmpBuffer.forEach(element => {
           Global.current.elems.push(element);
-          if(d3.event.keyCode>=48 && d3.event.keyCode<=57) Global.current.elems[Global.current.elems.length-1].info.Pool = d3.event.keyCode - 48;
+          element.info = JSON.parse(JSON.stringify(element.info));
+          if(d3.event.keyCode>=48 && d3.event.keyCode<=57)
+          { 
+            element.info.Pool = d3.event.keyCode - 48;
+            calculateID(element, Global.currentlvl, Global.current);
+          }
           element.x = Global.Mouse.x + element.x - minX;
           element.y = Global.Mouse.y + element.y - minY;
         });
@@ -790,18 +809,49 @@ function Draw(L, Lindex, i=-1)
           .remove();
       });
     
-    var object=svg.selectAll("image")
+    var object=svg.selectAll("svg.object")
         .data(L.elems)
         .enter()
-        .append("image")
+        .append("svg")
         .attr("id", function(d){ if(d.id) return d.id; })
-        .attr("class", function(d){ if (d.hide==true) return "hide"; return d.type;})
-        .attr("href", function(d){return d.image;})
+        .attr("class", function(d){ if (d.hide==true) return "hide"; return "object";})
         .attr("x", function(d){ return d.x;})
         .attr("y", function(d){ return d.y;})
-        .attr("width", function(d){ if (d.image=="comut1.png" || d.image=="rect.png") return 10; return Global.wsize;})
-        .attr("height", function(d){ if (d.image=="comut1.png" || d.image=="rect.png") return 6; return Global.hsize;})
-        .on("click", function(d){
+        .attr("width", function(d){ if (d.image=="comut1.png" || d.image=="rect.png") return 10; if(d.container == true) return d.width; return Global.wsize;})
+        .attr("height", function(d){ if (d.image=="comut1.png" || d.image=="rect.png") return 6; if(d.container == true) return 40; return Global.hsize;})
+
+
+      object.each(function(d){
+        var curObject = d3.select(this);
+
+        if(d.container == true)
+        {
+          curObject.append("rect")
+              .attr("width", "100%")
+              .attr("height", "100%")
+              .attr("fill", "#FFEBCD")
+              .attr("stroke", "black");
+
+          curObject.append("text")
+              .html(function(d){if(d.id != undefined) return d.id; if(d.info.name != undefined) return d.info.name; return "Node"})
+              .attr("x", "50%")
+              .attr("y", "50%")
+              .attr("text-anchor", "middle")
+              .attr("dominant-baseline", "middle");
+              i++;
+        }
+        else
+        {
+          curObject.append("image")
+            .attr("href", function(d){return d.image})
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", function(d){ if (d.image=="comut1.png" || d.image=="rect.png") return 10; return Global.wsize;})
+            .attr("height", function(d){ if (d.image=="comut1.png" || d.image=="rect.png") return 6; return Global.hsize;})    
+        }
+      })
+        
+      object.on("click", function(d){
           if (d3.event.ctrlKey)
           {
             SaveMODEL();
@@ -921,7 +971,7 @@ function Draw(L, Lindex, i=-1)
                 .attr("x", d.x = Math.round(d3.event.x/20)*20)
                 .attr("y", d.y = Math.round(d3.event.y/20)*20);
               else
-                svg.selectAll("image")
+                svg.selectAll("svg.object")
                 .attr("x", function(d){if(d.selected==true){return d.x = d3.event.x + (d.x-StartX)} return d.x})
                 .attr("y", function(d){if(d.selected==true){return d.y = d3.event.y + (d.y - StartY)} return d.y})
                 .lower();
@@ -951,13 +1001,14 @@ function Draw(L, Lindex, i=-1)
                   .attr("type", function(d){return d.type})
                   .on("mouseover", function(d){
                     svg.append("text")
+                    .attr("class", "label")
                     .attr("x", function(){ return (event.target.x2.baseVal.value+event.target.x1.baseVal.value)/2;})
                     .attr("y", function(){ return (event.target.y2.baseVal.value+event.target.y1.baseVal.value)/2;})
                     .attr("id", "LinkDescription")
                     .html(d.type);
                   })
                   .on("mouseout", function(){
-                    svg.selectAll("text")
+                    svg.selectAll("text.label")
                       .remove();
                   })
                   .lower();

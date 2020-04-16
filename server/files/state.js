@@ -200,35 +200,26 @@ function OldSubmitAddContainer()
 
 function AddContainer()
 {
-    var paramsDiv = d3.select("div.canvas")
-        .append("div")
-        .attr("class", "PoolC");
-
-    paramsDiv.append("div")
-        .attr("class", "PoolCo")
-        .append("svg")
-        .attr("class", "PoolCon")
-        .attr("style", "background-color: white")
-        .attr("width", 1000)
-        .attr("height", 1000)
-        //.attr("viewBox", "0 0 550 500")
-        .attr("overflow", "scroll");
-
-    var p = paramsDiv.append("p")
-        .html("Number of Sections")
-        
-    p.append("input")
-        .attr("value", 1)
-        .attr("id", "SectionsNumber")
-        
-    p.append("button")
-        .html("Add")
-        .attr("onclick", "AddSections()");
-
-    paramsDiv.append("div")
-        .append("button")
-        .html("Submit")
-        .attr("onclick", "SubmitAddContainer()");
+    alert("addcontainer!");
+    d3.select("div.selectImg")
+        .remove();
+      var i = 0;
+      var N = document.getElementById("number").value;
+      var xValue = parseFloat(document.getElementById("xValue").value);
+      while (i<N)
+      {
+        Global.current.elems.push({y:300+(i/2-i%2/2)*50, x: xValue+i%2*200, container: true, width: document.getElementById("ContainerWidth").value, info:{type:document.getElementById("TypeInput").value}});
+        if (document.getElementById("CheckPool").checked)
+          Global.current.elems[Global.current.elems.length-1].info.Pool = parseInt(document.getElementById("StartIndex").value);
+        if (document.getElementById("CheckIndex").checked)
+          Global.current.elems[Global.current.elems.length-1].info.index = parseInt(document.getElementById("StartIndex").value)+i;
+        if (document.getElementById("CheckID").checked)
+        {
+          calculateID(Global.current.elems[Global.current.elems.length-1], Global.currentlvl, Global.current)
+        }
+        i++;
+      }
+      Draw(Global.current, Global.currentlvl);
 }
 
 function AddSections()

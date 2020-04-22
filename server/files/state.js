@@ -208,9 +208,9 @@ function AddContainer()
       var xValue = parseFloat(document.getElementById("xValue").value);
       while (i<N)
       {
-        Global.current.elems.push({y:300+(i/2-i%2/2)*50, x: xValue+i%2*200, container: true, width: document.getElementById("ContainerWidth").value, info:{type:document.getElementById("TypeInput").value}});
+        Global.current.elems.push({y:300+(i/2-i%2/2)*50, x: xValue+i%2*200, container: true, width: document.getElementById("ContainerWidth").value, color: document.getElementById("ContainerColor").value, info:{type:document.getElementById("TypeInput").value}});
         if (document.getElementById("CheckPool").checked)
-          Global.current.elems[Global.current.elems.length-1].info.Pool = parseInt(document.getElementById("StartIndex").value);
+          Global.current.elems[Global.current.elems.length-1].info.Pool = parseInt(document.getElementById("PoolInit").value);
         if (document.getElementById("CheckIndex").checked)
           Global.current.elems[Global.current.elems.length-1].info.index = parseInt(document.getElementById("StartIndex").value)+i;
         if (document.getElementById("CheckID").checked)

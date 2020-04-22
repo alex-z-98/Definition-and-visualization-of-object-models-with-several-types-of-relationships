@@ -54,6 +54,7 @@
   .infoRed{
     position: absolute;
     background: #eee;
+    width: 250px;
     left: 300px;
     top: 150px;
   }
@@ -179,7 +180,7 @@ image{
         <input type="radio" name="LinkType" value="Ethernet">Ethernet</input>
         <input type="radio" name="LinkType" value="InfiniBand">InfiniBand</input>
         <input type="radio" name="LinkType" value="None" checked>None</input>
-        <button onclick="AddLink()">Connect</button>
+        <input id="ConnectCheckbox" type="checkbox" onclick="AddLink()">Connect</button>
         <button onclick="Save()">Save</button>
         <button id="Undo" onclick="Undo()" disabled>Undo</button>
         <input type="checkbox" name="LinkFilter" value="Ethernet" onchange="FilterChanged('Ethernet')">Ethernet</input>

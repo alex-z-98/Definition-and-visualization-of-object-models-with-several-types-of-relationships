@@ -165,7 +165,7 @@ function AddObject()
       {
         Global.current.elems.push({image:d, y:300+(i/2-i%2/2)*50, x: xValue+i%2*200, info:{type:document.getElementById("TypeInput").value}});
         if (document.getElementById("CheckPool").checked)
-          Global.current.elems[Global.current.elems.length-1].info.Pool = parseInt(document.getElementById("StartIndex").value);
+          Global.current.elems[Global.current.elems.length-1].info.Pool = parseInt(document.getElementById("PoolInit").value);
         if (document.getElementById("CheckIndex").checked)
           Global.current.elems[Global.current.elems.length-1].info.index = parseInt(document.getElementById("StartIndex").value)+i;
         if (document.getElementById("CheckID").checked)
@@ -226,7 +226,7 @@ function AddObject()
     .attr("type", "search")
     .attr("placeholder", "Number")
     .attr("id", "xValue")
-    .attr("value", 250);
+    .attr("value", 200);
 
   div.append("input")
     .attr("type", "search")
@@ -280,6 +280,15 @@ function AddObject()
   p.append("input")
     .attr("id", "ContainerWidth")
     .attr("value", 200);
+    
+  p = div.append("p")
+  
+  p.append("label")
+    .html("Color(for container):")
+
+  p.append("input")
+    .attr("id", "ContainerColor")
+    .attr("value", "#FFEBCD");
 
   div.append("button")
     .attr("onclick", "AddContainer()")
@@ -299,31 +308,93 @@ function AddLink()
 {
   SaveMODEL();
 
-  d3.selectAll("svg.object")
-    .on("click", function(d){
-      Global.linkFlag =! Global.linkFlag;
-      //alert(d.name);
-      if (Global.linkFlag)
-      {
-        var tp;
-        var LT=document.getElementsByName("LinkType"); 
-        for(var i=0; i<LT.length; i++) 
-          if (LT[i].checked) 
-           tp=Global.types[i];
-        Global.current.lines.push({source: Global.current.elems.indexOf(d), target: Global.current.elems.indexOf(d), type: tp})
-        d3.select(this)
-          .attr("width", Global.wsize+6)
-          .attr("height", Global.hsize+6)
-          .attr("x", function(d){return d.x-3})
-          .attr("y", function(d){return d.y-3});
-      }
-      else
-      {
-        Global.current.lines[Global.current.lines.length-1].target=Global.current.elems.indexOf(d);
-        Draw(Global.current, Global.currentlvl);
-      }
-    })
-  document.getElementById('Undo').disabled=false;
+  if (document.getElementById("ConnectCheckbox").checked)
+  {
+    d3.selectAll("svg.object")
+      .on("click", function(d){
+        Global.linkFlag =! Global.linkFlag;
+        //alert(d.name);
+        if (Global.linkFlag)
+        {
+          var tp;
+          var LT=document.getElementsByName("LinkType"); 
+          for(var i=0; i<LT.length; i++) 
+            if (LT[i].checked) 
+            tp=Global.types[i];
+          Global.current.lines.push({source: Global.current.elems.indexOf(d), target: Global.current.elems.indexOf(d), type: tp})
+          d3.select(this)
+            .attr("class", "FirstConnect")
+            .attr("width", Global.wsize+6)
+            .attr("height", Global.hsize+6)
+            .attr("x", function(d){return d.x-3})
+            .attr("y", function(d){return d.y-3});
+
+          d3.select(this)
+            .select("image")
+            .attr("class", "FirstConnect")
+            .attr("width", Global.wsize+6)
+            .attr("height", Global.hsize+6)
+        }
+        else
+        {
+          d3.selectAll("svg.FirstConnect")
+            .attr("width", Global.wsize)
+            .attr("height", Global.hsize)
+            .attr("x", function(d){return d.x})
+            .attr("y", function(d){return d.y});
+
+          d3.selectAll("image.FirstConnect")
+            .attr("width", Global.wsize)
+            .attr("height", Global.hsize)
+
+
+          Global.current.lines[Global.current.lines.length-1].target=Global.current.elems.indexOf(d);
+
+          var CurrentLine = Global.current.lines[Global.current.lines.length-1];
+
+          d3.select("svg.canvas")
+            .append("line")
+            .lower()
+            .attr("class", function(){ if (CurrentLine.hide==true) return "hide"; return "connect";})
+            .attr("x1", function(){if (Global.current.elems[CurrentLine.source].image=="rect.png" || Global.current.elems[CurrentLine.source].image=="comut1.png") return Global.current.elems[CurrentLine.source].x+5; return Global.current.elems[CurrentLine.source].x+Global.wsize/2})
+            .attr("y1", function(){if (Global.current.elems[CurrentLine.source].image=="rect.png" || Global.current.elems[CurrentLine.source].image=="comut1.png") return Global.current.elems[CurrentLine.source].y+3; return Global.current.elems[CurrentLine.source].y+Global.hsize/2})
+            .attr("x2", function(){if (Global.current.elems[CurrentLine.target].image=="rect.png" || Global.current.elems[CurrentLine.target].image=="comut1.png") return Global.current.elems[CurrentLine.target].x+5; return Global.current.elems[CurrentLine.target].x+Global.wsize/2})
+            .attr("y2", function(){if (Global.current.elems[CurrentLine.target].image=="rect.png" || Global.current.elems[CurrentLine.target].image=="comut1.png") return Global.current.elems[CurrentLine.target].y+3; return Global.current.elems[CurrentLine.target].y+Global.hsize/2})
+            .attr("stroke", function(){if (Global.linkFilter.indexOf(CurrentLine.type)!=-1) return "#5b92e5"; return "#000000"})
+            .attr("type", function(){return CurrentLine.type});
+
+          d3.select("svg.canvas")
+            .append("line")
+            .lower()
+            .attr("class", function(){ if (CurrentLine.hide==true) return "hide"; return "opacity";})
+            .attr("x1", function(){if (Global.current.elems[CurrentLine.source].image=="rect.png" || Global.current.elems[CurrentLine.source].image=="comut1.png") return Global.current.elems[CurrentLine.source].x+5; return Global.current.elems[CurrentLine.source].x+Global.wsize/2})
+            .attr("y1", function(){if (Global.current.elems[CurrentLine.source].image=="rect.png" || Global.current.elems[CurrentLine.source].image=="comut1.png") return Global.current.elems[CurrentLine.source].y+3; return Global.current.elems[CurrentLine.source].y+Global.hsize/2})
+            .attr("x2", function(){if (Global.current.elems[CurrentLine.target].image=="rect.png" || Global.current.elems[CurrentLine.target].image=="comut1.png") return Global.current.elems[CurrentLine.target].x+5; return Global.current.elems[CurrentLine.target].x+Global.wsize/2})
+            .attr("y2", function(){if (Global.current.elems[CurrentLine.target].image=="rect.png" || Global.current.elems[CurrentLine.target].image=="comut1.png") return Global.current.elems[CurrentLine.target].y+3; return Global.current.elems[CurrentLine.target].y+Global.hsize/2})
+            .attr("stroke", function(){if (Global.linkFilter.indexOf(CurrentLine.type)!=-1) return "#5b92e5"; return "#ccc"})
+            .attr("stroke-width", function(){return 8})
+            .attr("stroke-opacity", function(){return 0})
+            .attr("type", function(){return CurrentLine.type})
+            .on("mouseover", function(){
+              d3.select("svg.canvas").append("text")
+              .attr("class", "definition")
+              .attr("x", function(){ return (event.target.x2.baseVal.value+event.target.x1.baseVal.value)/2;})
+              .attr("y", function(){ return (event.target.y2.baseVal.value+event.target.y1.baseVal.value)/2;})
+              .attr("id", "LinkDescription")
+              .html(CurrentLine.type);
+            })
+            .on("mouseout", function(){
+              d3.selectAll("text.definition")
+                .remove();
+            });
+        }
+      })
+    document.getElementById('Undo').disabled=false;
+  }
+  else 
+  {
+    Draw(Global.current, Global.currentlvl);
+  }
 }
 
 function SearchID(value)
@@ -345,18 +416,22 @@ function findID(child, lvl)
   child.elems.forEach(element => {
     if(element.id != undefined)
     {
+      //console.log("Calculate!")
       calculateID(element, lvl, child);
       return;
     }
     if(element.child != undefined)
     {
-      findID(Global.MODEL[lvl+1][element.child], lvl+1);
+      //console.log("Level: " + item)
+      element.child.forEach(function (item)
+        {findID(Global.MODEL[lvl+1][item], lvl+1);});
     }
   });
 }
 
 function calculateID(d, startingLvl, startingObj)
 {
+  //console.log(d.id);
   var j = 0;
   d.id = "";
   d.id += Global.tmpl.preamble;
@@ -365,6 +440,7 @@ function calculateID(d, startingLvl, startingObj)
     f = startingObj;
     if(element == "Pool" && d.info.Pool!=undefined) 
     {
+      //console.log("Found Pool")
       d.id += '0'.repeat(Global.tmpl.len[j] - d.info.Pool.toString().length)
       d.id += d.info.Pool;
       j++;
@@ -372,6 +448,7 @@ function calculateID(d, startingLvl, startingObj)
     }
     if(element == "index")
     {
+      //console.log("Found index")
       d.id += '0'.repeat(Global.tmpl.len[j] - d.info.index.toString().length)
       d.id += d.info.index;
       j++;
@@ -379,8 +456,11 @@ function calculateID(d, startingLvl, startingObj)
     }
     while(lvl>0)
     {
+      console.log("Father: " + f.father + " FatherIndex: " + f.fatherIndex);
       if (Global.MODEL[lvl-1][f.father].elems[f.fatherIndex].info.type == element)
       {
+        //console.log("Found father with index");
+        //console.log(Global.MODEL[lvl-1][f.father].elems[f.fatherIndex].info.index);
         d.id += '0'.repeat(Global.tmpl.len[j] - Global.MODEL[lvl-1][f.father].elems[f.fatherIndex].info.index.toString().length)
         d.id += Global.MODEL[lvl-1][f.father].elems[f.fatherIndex].info.index;
         j++;
@@ -414,7 +494,11 @@ function ApplyChanges(d)
       calculateID(d, Global.currentlvl, Global.current);
     else
       if(d.child != undefined)
-        findID(Global.MODEL[Global.currentlvl+1][d.child], Global.currentlvl+1);
+      d.child.forEach(function(item)
+      { 
+        console.log("Level: " + item + " Layer: " + Global.currentlvl)
+        findID(Global.MODEL[Global.currentlvl+1][item], Global.currentlvl+1);
+      })
   }
   else
   {
@@ -502,6 +586,66 @@ function AddProperty()
 function CloseRow(e)
 {
   e.parentNode.parentNode.removeChild(e.parentNode);
+}
+
+function ShowChilds(d)
+{
+  d3.select("div.carousel")
+    .remove();
+
+  d3.selectAll("fieldset")
+    .remove(); 
+
+  K=d;
+
+  var infoRed=d3.select("div.canvas")
+    .append("fieldset")
+    .attr("class", "infoRed");
+    
+  infoRed.append("legend")
+    .html("Enter information:");
+
+  if(d.child == undefined) d.child = [];
+
+    var row=infoRed.selectAll("p").data(d.child).enter().append("p").attr("class", "c");
+
+    row.each(function(d){
+      d3.select(this).append("input")
+        .attr("value", Global.MODEL[Global.currentlvl+1][d].name)
+        .attr("id", "LevelName"+d)
+        .attr("class", "name");
+
+      d3.select(this).append("button")
+        .on("click", function() {
+          console.log("Lenght: " + Global.MODEL[Global.currentlvl+1].length)
+          console.log(d);
+          Global.MODEL[Global.currentlvl+1][d].name = document.getElementById("LevelName"+d).value;
+          Draw(Global.MODEL[Global.currentlvl+1][d], Global.currentlvl+1)})
+        .html("Open");
+    })
+    //infoRed.append("br");
+
+  infoRed.append("button")
+          .attr("class", "close")
+          .html("x")
+          .attr("onclick", "d3.selectAll('fieldset').remove();");
+
+  // infoRed.append("button")
+  //         .html("Apply")
+  //         .attr("class", "apply")
+  //         .attr("onclick", "ApplyChanges(K)");
+
+  infoRed.append("button")
+           .html("Add Property")
+           .attr("class", "apply")
+           .on("click", function(){
+            if (Global.MODEL[Global.currentlvl+1]==undefined) Global.MODEL[Global.currentlvl+1]=[];
+            Global.MODEL[Global.currentlvl+1].push({father:Global.MODEL[Global.currentlvl].indexOf(Global.current), fatherIndex:Global.current.elems.indexOf(d), elems:[], lines:[]});
+            d.child.push(Global.MODEL[Global.currentlvl+1].length-1);
+            ShowChilds(d);
+            //Draw(Global.MODEL[Lindex+1][Global.MODEL[Lindex+1].length-1], Lindex+1);
+           });
+          
 }
 
 function Change(d)
@@ -592,11 +736,15 @@ function CopyLevels(L, LvlIndex, father, IterSelectedLayer)
   L.elems.forEach(element => {
     if (element.child!=undefined)
     {
-      var TmpLvl=JSON.parse(JSON.stringify(Global.MODEL[IterSelectedLayer+1][element.child]));
-      if (Global.MODEL[LvlIndex+1] == undefined) Global.MODEL.push([]);
-      Global.MODEL[LvlIndex+1].push(TmpLvl);
-      element.child=Global.MODEL[LvlIndex+1].length-1;
-      CopyLevels(TmpLvl, LvlIndex+1, Global.MODEL[LvlIndex].indexOf(L), IterSelectedLayer+1);
+      element.child.forEach(function(item)
+      {
+        var TmpLvl=JSON.parse(JSON.stringify(Global.MODEL[IterSelectedLayer+1][item]));
+        if (Global.MODEL[LvlIndex+1] == undefined) Global.MODEL.push([]);
+        Global.MODEL[LvlIndex+1].push(TmpLvl);
+        element.child = [];
+        element.child.push(Global.MODEL[LvlIndex+1].length-1);
+        CopyLevels(TmpLvl, LvlIndex+1, Global.MODEL[LvlIndex].indexOf(L), IterSelectedLayer+1);
+      })
     }
   });
 }
@@ -646,6 +794,8 @@ function Draw(L, Lindex, i=-1)
     Global.current=L;
     Global.currentlvl=Lindex;
 
+    document.getElementById("ConnectCheckbox").checked = false;
+
     d3.selectAll("input.back")
             .remove();
 
@@ -658,7 +808,8 @@ function Draw(L, Lindex, i=-1)
           .attr("class", "canvas")
           .append("svg")
           .attr("width", Global.w)
-          .attr("height", Global.h);
+          .attr("height", Global.h)
+          .attr("class", "canvas");
 
     svg.on("mousemove", function(){
       Global.Mouse.x=event.pageX;
@@ -708,6 +859,8 @@ function Draw(L, Lindex, i=-1)
       //alert(d3.event.keyCode);
       if(d3.event.keyCode == 67 || d3.event.keyCode>=48 && d3.event.keyCode<=57)
       {
+        document.getElementById('Undo').disabled=false;
+        SaveMODEL();
         var TmpBuffer=[];
         var minX = Global.w, minY = Global.h;
         Global.SelectedBuffer.forEach(element => {
@@ -724,14 +877,18 @@ function Draw(L, Lindex, i=-1)
           var TmpLvl={};
           var i=0;
           Object.assign(tmp, element);
+          tmp.child = [];
           if (element.child != undefined) 
           {
-            TmpLvl=JSON.parse(JSON.stringify(Global.MODEL[Global.SelectedLayer+1][element.child]));
-            if (Global.MODEL[Lindex+1] == undefined) Global.MODEL.push([]);
-            tmp.child=Global.MODEL[Lindex+1].length;
-            Global.MODEL[Lindex+1].push(TmpLvl);
-            Global.MODEL[Lindex+1][Global.MODEL[Lindex+1].length-1].fatherIndex = Global.current.elems.length+i++;
-            CopyLevels(Global.MODEL[Lindex+1][tmp.child], Lindex+1, Global.MODEL[Lindex].indexOf(L), Global.SelectedLayer+1);
+            element.child.forEach(function(item)
+            {
+              TmpLvl=JSON.parse(JSON.stringify(Global.MODEL[Global.SelectedLayer+1][item]));
+              if (Global.MODEL[Lindex+1] == undefined) Global.MODEL.push([]);
+              tmp.child.push(Global.MODEL[Lindex+1].length);
+              Global.MODEL[Lindex+1].push(TmpLvl);
+              Global.MODEL[Lindex+1][Global.MODEL[Lindex+1].length-1].fatherIndex = Global.current.elems.length;
+              CopyLevels(Global.MODEL[Lindex+1][Global.MODEL[Lindex+1].length-1], Lindex+1, Global.MODEL[Lindex].indexOf(L), Global.SelectedLayer+1);
+            })
           }
           tmp.copy=true;
           TmpBuffer.push(tmp);
@@ -746,7 +903,8 @@ function Draw(L, Lindex, i=-1)
           if(d3.event.keyCode>=48 && d3.event.keyCode<=57)
           { 
             element.info.Pool = d3.event.keyCode - 48;
-            calculateID(element, Global.currentlvl, Global.current);
+            if(element.id != undefined)
+              calculateID(element, Global.currentlvl, Global.current);
           }
           element.x = Global.Mouse.x + element.x - minX;
           element.y = Global.Mouse.y + element.y - minY;
@@ -829,7 +987,7 @@ function Draw(L, Lindex, i=-1)
           curObject.append("rect")
               .attr("width", "100%")
               .attr("height", "100%")
-              .attr("fill", "#FFEBCD")
+              .attr("fill", function(d){return d.color})
               .attr("stroke", "black");
 
           curObject.append("text")
@@ -881,27 +1039,41 @@ function Draw(L, Lindex, i=-1)
           }
           else if (d3.event.altKey)
           {
-            if (Global.MODEL[Lindex+1]==undefined) Global.MODEL[Lindex+1]=[];
-            Global.MODEL[Lindex+1].push({father:Global.MODEL[Lindex].indexOf(L), fatherIndex:Global.current.elems.indexOf(d), elems:[], lines:[]});
-            d.child=Global.MODEL[Lindex+1].length-1;
-            Draw(Global.MODEL[Lindex+1][Global.MODEL[Lindex+1].length-1], Lindex+1);
+            ShowChilds(d);
+            // if (Global.MODEL[Lindex+1]==undefined) Global.MODEL[Lindex+1]=[];
+            // Global.MODEL[Lindex+1].push({father:Global.MODEL[Lindex].indexOf(L), fatherIndex:Global.current.elems.indexOf(d), elems:[], lines:[]});
+            // d.child=Global.MODEL[Lindex+1].length-1;
+            // Draw(Global.MODEL[Lindex+1][Global.MODEL[Lindex+1].length-1], Lindex+1);
           }
           else if (d3.event.shiftKey)
           {
             var tmp={};
             var TmpLvl={};
             Object.assign(tmp, d);
-            if (d.child != undefined) TmpLvl=JSON.parse(JSON.stringify(Global.MODEL[Lindex+1][d.child]));
+            if (d.child != undefined)
+            {
+              tmp.child = [];
+              d.child.forEach(function(item) 
+              {
+                TmpLvl=JSON.parse(JSON.stringify(Global.MODEL[Lindex+1][item]));
+                tmp.child.push(Global.MODEL[Lindex+1].length);
+                Global.MODEL[Lindex+1].push(TmpLvl);
+                Global.MODEL[Lindex+1][Global.MODEL[Lindex+1].length-1].fatherIndex = Global.current.elems.length;
+                CopyLevels(Global.MODEL[Lindex+1][Global.MODEL[Lindex+1].length-1], Lindex+1, Global.MODEL[Lindex].indexOf(L), Lindex+1);
+              })
+            }
+            tmp.info = JSON.parse(JSON.stringify(d.info));
             tmp.copy=true;
-            if (d.child!=undefined) tmp.child=Global.MODEL[Lindex+1].length;
             Global.current.elems.push(tmp);
-            Global.MODEL[Lindex+1].push(TmpLvl);
-            if (d.child!=undefined) CopyLevels(Global.MODEL[Lindex+1][tmp.child], Lindex+1, Global.MODEL[Lindex].indexOf(L), Lindex+1);
             Draw(L, Lindex);
           }
           else{
-            if(d.child!=undefined)
-                Draw(Global.MODEL[Lindex+1][d.child], Lindex+1);}})
+            
+            ShowChilds(d);
+
+            // if(d.child!=undefined)
+            //     Draw(Global.MODEL[Lindex+1][d.child], Lindex+1);
+              }})
         .on("contextmenu", function(d){
           
           d3.selectAll("div.tabl")

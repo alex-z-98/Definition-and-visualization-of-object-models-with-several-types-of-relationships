@@ -8,7 +8,7 @@ Global = {
     currentlvl: undefined,
     linkFlag: false,
     LinkFilter: undefined,
-    images: ["block.png", "door.png", "comut.png", "energy.png", "server.png", "blade2.jpg", "disk.jpg", "NetCol8000.jfif", "IBcomut.jfif", "pool.png", "comut1.png", "rect.png"],
+    images: ["block.png", "comut.png", "energy.png", "server.png", "blade2.jpg", "disk.jpg", "NetCol8000.jfif", "IBcomut.jfif", "pool.png", "comut1.png", "rect.png"],
     types: ["Ethernet", "InfiniBand",],
     StartingPoint: {},
     MousePoint: {},

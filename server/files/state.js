@@ -34,7 +34,8 @@ function AddMultiLink()
   d3.selectAll("image")
     .on("click", function(d){
         Global.SelectedBuffer.forEach(element => {
-            Global.current.lines.push({source: Global.current.elems.indexOf(d), target:Global.current.elems.indexOf(element)});
+            if (element.hide!=true)
+                Global.current.lines.push({source: Global.current.elems.indexOf(d), target:Global.current.elems.indexOf(element)});
         })
         Draw(Global.current, Global.currentlvl);
     });
